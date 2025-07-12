@@ -27,11 +27,12 @@ export const FIGHTER_INFO = {
   nationality: ['Georgian', 'Spanish'],
   fightingOutOf: 'Madrid, Spain',
   height: "5'7\"",
-  weight: '145 lbs',
+  weight: '155 lbs', // Actualizado para peso ligero
   reach: "69\"",
   stance: 'Orthodox',
-  division: 'Featherweight',
-  rank: '#1 UFC Featherweight Champion',
+  division: 'Lightweight', // Actualizado
+  rank: '#1 UFC Lightweight Champion', // Actualizado
+  p4pRanking: '#1 P4P', // Actualizado
 } as const
 
 // Social media links
@@ -80,11 +81,29 @@ export const NAV_ITEMS = [
 // UFC Career highlights
 export const CAREER_HIGHLIGHTS = [
   {
+    title: 'UFC Lightweight Champion',
+    date: '2025-06-28',
+    description: 'Defeated Charles Oliveira at UFC 317',
+    location: 'Las Vegas, Nevada',
+    result: 'KO (Punches)',
+    round: 1,
+    time: '2:27'
+  },
+  {
+    title: 'UFC Featherweight Champion Defense',
+    date: '2024-10-26',
+    description: 'Knocked out Max Holloway at UFC 308',
+    location: 'Abu Dhabi, UAE',
+    result: 'KO (Punch)',
+    round: 3,
+    time: '1:34'
+  },
+  {
     title: 'UFC Featherweight Champion',
     date: '2024-02-17',
     description: 'Defeated Alexander Volkanovski at UFC 298',
     location: 'Anaheim, California',
-    result: 'TKO (Punches)',
+    result: 'KO (Punches)',
     round: 2,
     time: '3:32'
   },
@@ -111,23 +130,27 @@ export const CAREER_HIGHLIGHTS = [
 // Fighting statistics
 export const FIGHT_STATS = {
   record: {
-    wins: 15,
+    wins: 16, // Actualizado
     losses: 0,
     draws: 0,
     nc: 0
   },
   finishRate: {
     ko: 7,
-    submissions: 3,
-    decisions: 5
+    submissions: 8, // Actualizado
+    decisions: 1 // Actualizado
   },
   ufcStats: {
-    fights: 7,
-    wins: 7,
+    fights: 8, // Actualizado
+    wins: 8, // Actualizado
     losses: 0,
-    finishes: 5,
-    bonuses: 3
-  }
+    finishes: 7, // Actualizado
+    bonuses: 5 // Actualizado
+  },
+  titles: [
+    'UFC Lightweight Champion (Current)',
+    'Former UFC Featherweight Champion'
+  ]
 } as const
 
 // Colors theme

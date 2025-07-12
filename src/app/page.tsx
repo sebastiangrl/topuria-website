@@ -4,18 +4,14 @@ import { Metadata } from 'next'
 import Header from '@/components/layout/header'
 import Footer from '@/components/layout/footer'
 import ScrollProgress from '@/components/interactive/scroll-progress'
-
-// Lazy loading de las secciones para mejor performance
-// import HeroSection from '@/components/sections/hero-section'
-// import AboutSection from '@/components/sections/about-section'
-// import StatsSection from '@/components/sections/stats-section'
-// import TimelineSection from '@/components/sections/timeline-section'
-// import GallerySection from '@/components/sections/gallery-section'
-// import ContactSection from '@/components/sections/contact-section'
+import HeroSection from '@/components/sections/hero-section'
+import AboutSection from '@/components/sections/about-section'
+import StatsSection from '@/components/sections/stats-section'
+import TimelineSection from '@/components/sections/timeline-section'
 
 export const metadata: Metadata = {
-  title: 'Ilia Topuria - UFC Featherweight Champion',
-  description: 'Official website of Ilia Topuria, undefeated UFC Featherweight Champion from Georgia and Spain. El Matador\'s journey to the top.',
+  title: 'Ilia Topuria - UFC Lightweight Champion',
+  description: 'Official website of Ilia Topuria, undefeated UFC Lightweight Champion from Georgia and Spain. El Matador\'s journey to the top.',
 }
 
 export default function HomePage() {
@@ -31,123 +27,226 @@ export default function HomePage() {
       <main id="main-content" className="relative">
         
         {/* Hero Section */}
-        <section id="home" className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background">
-          <div className="container mx-auto px-4 text-center">
-            <div className="max-w-4xl mx-auto space-y-8">
-              
-              {/* Champion Badge */}
-              <div className="inline-flex items-center px-4 py-2 bg-spanish-red/10 border border-spanish-red/20 rounded-full text-spanish-red font-semibold text-sm">
-                🏆 UFC FEATHERWEIGHT CHAMPION
+        <Suspense fallback={
+          <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-muted/30 to-background">
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 mx-auto bg-spanish-red/20 rounded-full animate-pulse" />
+              <div className="text-lg text-muted-foreground">Loading El Matador...</div>
+            </div>
+          </section>
+        }>
+          <HeroSection />
+        </Suspense>
+
+        {/* About Section - Interactive Timeline */}
+        <Suspense fallback={
+          <section className="py-20 bg-muted/50 animate-pulse">
+            <div className="container mx-auto px-4">
+              <div className="max-w-4xl mx-auto text-center">
+                <div className="h-8 bg-muted rounded mb-4 mx-auto w-64"></div>
+                <div className="h-6 bg-muted rounded mb-8 mx-auto w-96"></div>
+                <div className="h-4 bg-muted rounded mx-auto w-full"></div>
+              </div>
+            </div>
+          </section>
+        }>
+          <AboutSection />
+        </Suspense>
+
+        {/* Stats Section - Performance Dashboard */}
+        <Suspense fallback={
+          <section className="py-20 bg-background animate-pulse">
+            <div className="container mx-auto px-4">
+              <div className="max-w-4xl mx-auto text-center">
+                <div className="h-8 bg-muted rounded mb-4 mx-auto w-72"></div>
+                <div className="h-6 bg-muted rounded mb-8 mx-auto w-80"></div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {[1,2,3,4].map(i => (
+                    <div key={i} className="h-32 bg-muted rounded"></div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        }>
+          <StatsSection />
+        </Suspense>
+
+        {/* Timeline Section - Professional Career */}
+        <Suspense fallback={
+          <section className="py-20 bg-muted/30 animate-pulse">
+            <div className="container mx-auto px-4">
+              <div className="max-w-4xl mx-auto text-center">
+                <div className="h-8 bg-muted rounded mb-4 mx-auto w-80"></div>
+                <div className="h-6 bg-muted rounded mb-8 mx-auto w-96"></div>
+                <div className="space-y-4">
+                  {[1,2,3].map(i => (
+                    <div key={i} className="h-24 bg-muted rounded"></div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        }>
+          <TimelineSection />
+        </Suspense>
+
+        {/* Gallery Section - Visual Showcase */}
+        <section id="gallery" className="py-20 bg-background relative overflow-hidden">
+          {/* Background Effects */}
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute top-20 right-20 w-32 h-32 bg-spanish-gold rounded-full blur-3xl" />
+            <div className="absolute bottom-20 left-20 w-40 h-40 bg-spanish-red rounded-full blur-3xl" />
+          </div>
+
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="max-w-4xl mx-auto text-center mb-16">
+              <div className="inline-flex items-center px-4 py-2 bg-spanish-gold/10 border border-spanish-gold/30 rounded-full text-spanish-gold font-semibold text-sm mb-4">
+                📸 Visual Journey
               </div>
               
-              {/* Main Title */}
-              <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-foreground leading-tight">
-                ILIA
+              <h2 className="text-4xl md:text-6xl font-black text-foreground mb-6">
+                Moments of
                 <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-spanish-red to-spanish-gold">
-                  TOPURIA
+                  Greatness
                 </span>
-              </h1>
+              </h2>
               
-              {/* Subtitle */}
-              <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                Undefeated. Unstoppable. <span className="text-spanish-red font-semibold">El Matador</span> from Georgia and Spain.
+              <p className="text-xl text-muted-foreground leading-relaxed">
+                From training sessions to championship victories, witness the visual story 
+                of El Matador's rise through exclusive imagery and behind-the-scenes moments.
               </p>
-              
-              {/* Stats Row */}
-              <div className="flex items-center justify-center space-x-8 md:space-x-12 py-8">
-                <div className="text-center">
-                  <div className="text-3xl md:text-4xl font-bold text-spanish-red">15</div>
-                  <div className="text-sm text-muted-foreground uppercase tracking-wide">Wins</div>
+            </div>
+
+            {/* Gallery Grid Placeholder */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[
+                'Training in Madrid',
+                'Championship Victory',
+                'Family Moments',
+                'Press Conferences',
+                'Behind the Scenes',
+                'Victory Celebrations'
+              ].map((category, index) => (
+                <div 
+                  key={category}
+                  className="group relative aspect-square bg-muted/50 rounded-xl overflow-hidden hover:scale-105 transition-all duration-300 cursor-pointer"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <h3 className="text-white font-semibold text-lg mb-1">{category}</h3>
+                    <p className="text-white/80 text-sm">Coming Soon</p>
+                  </div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-12 h-12 border-2 border-white/30 rounded-full flex items-center justify-center">
+                      <span className="text-white/60 text-2xl">📷</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="text-center">
-                  <div className="text-3xl md:text-4xl font-bold text-foreground">0</div>
-                  <div className="text-sm text-muted-foreground uppercase tracking-wide">Losses</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl md:text-4xl font-bold text-spanish-gold">10</div>
-                  <div className="text-sm text-muted-foreground uppercase tracking-wide">Finishes</div>
-                </div>
+              ))}
+            </div>
+
+            <div className="text-center mt-12">
+              <button className="px-8 py-3 bg-spanish-gold hover:bg-spanish-gold/80 text-black rounded-full font-semibold transition-all duration-300 hover:scale-105">
+                View Full Gallery
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* Contact Section - Get in Touch */}
+        <section id="contact" className="py-20 bg-gradient-to-br from-muted/50 via-background to-muted/50 relative overflow-hidden">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,_var(--spanish-red)_0%,_transparent_50%),_radial-gradient(circle_at_75%_75%,_var(--spanish-gold)_0%,_transparent_50%)]" />
+          </div>
+
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="max-w-4xl mx-auto text-center mb-16">
+              <div className="inline-flex items-center px-4 py-2 bg-spanish-red/10 border border-spanish-red/30 rounded-full text-spanish-red font-semibold text-sm mb-4">
+                📞 Get in Touch
               </div>
               
-            </div>
-          </div>
-        </section>
-
-        {/* About Section */}
-        <section id="about" className="py-20 bg-muted/50">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-8">
-                About El Matador
+              <h2 className="text-4xl md:text-6xl font-black text-foreground mb-6">
+                Contact
+                <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-spanish-red to-spanish-gold">
+                  Team Topuria
+                </span>
               </h2>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Born in Germany, raised with Georgian heart and Spanish spirit. 
-                Ilia Topuria has conquered the UFC featherweight division with his devastating knockout power 
-                and technical prowess. An undefeated champion who brings honor to both Georgia and Spain.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Career Section */}
-        <section id="career" className="py-20">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-8">
-                Championship Journey
-              </h2>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                From his UFC debut to becoming champion, every fight tells the story of dedication, 
-                skill, and the relentless pursuit of excellence that defines El Matador.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Stats Section */}
-        <section id="stats" className="py-20 bg-muted/50">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-8">
-                Fight Statistics
-              </h2>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Numbers that showcase the dominance and finishing ability of one of the most 
-                feared fighters in the featherweight division.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Gallery Section */}
-        <section id="gallery" className="py-20">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-8">
-                Gallery
-              </h2>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Moments that define a champion. From training to triumph, 
-                witness the journey of El Matador through exclusive imagery.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Contact Section */}
-        <section id="contact" className="py-20 bg-muted/50">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-8">
-                Get in Touch
-              </h2>
-              <p className="text-lg text-muted-foreground leading-relaxed mb-8">
-                For business inquiries, media requests, or partnership opportunities.
-              </p>
               
-              <div className="inline-flex items-center px-6 py-3 bg-spanish-red hover:bg-dark-red text-white rounded-full font-medium transition-colors cursor-pointer">
-                Contact Team Topuria
+              <p className="text-xl text-muted-foreground leading-relaxed mb-8">
+                For business inquiries, media requests, sponsorship opportunities, 
+                or partnership collaborations with the champion.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8 mb-12">
+              {[
+                {
+                  title: 'Business Inquiries',
+                  description: 'Sponsorship & Partnership Opportunities',
+                  icon: '💼',
+                  contact: 'business@topuria.com'
+                },
+                {
+                  title: 'Media & Press',
+                  description: 'Interview Requests & Media Coverage',
+                  icon: '📺',
+                  contact: 'media@topuria.com'
+                },
+                {
+                  title: 'Fan Mail',
+                  description: 'Messages from Supporters Worldwide',
+                  icon: '❤️',
+                  contact: 'fans@topuria.com'
+                }
+              ].map((contact, index) => (
+                <div 
+                  key={contact.title}
+                  className="text-center p-6 bg-background/80 backdrop-blur-sm border border-border/50 rounded-xl hover:border-spanish-red/30 transition-all duration-300 hover:scale-105"
+                >
+                  <div className="text-4xl mb-4">{contact.icon}</div>
+                  <h3 className="text-xl font-bold text-foreground mb-2">
+                    {contact.title}
+                  </h3>
+                  <p className="text-muted-foreground text-sm mb-4">
+                    {contact.description}
+                  </p>
+                  <div className="text-spanish-red font-medium">
+                    {contact.contact}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="text-center">
+              <button className="inline-flex items-center px-8 py-4 bg-spanish-red hover:bg-dark-red text-white rounded-full font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl">
+                <span className="mr-2">📧</span>
+                Send Message
+              </button>
+              
+              <div className="mt-6 flex items-center justify-center space-x-6 text-muted-foreground">
+                <span className="text-sm">Follow El Matador:</span>
+                <div className="flex space-x-4">
+                  {[
+                    { name: 'Instagram', icon: '📸', url: 'https://instagram.com/topuriailia' },
+                    { name: 'Twitter', icon: '🐦', url: 'https://twitter.com/Topuriailia' },
+                    { name: 'YouTube', icon: '📺', url: 'https://youtube.com/@IliaTopuria' }
+                  ].map(social => (
+                    <a
+                      key={social.name}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 bg-muted rounded-full flex items-center justify-center hover:bg-spanish-red hover:text-white transition-all duration-300"
+                      title={social.name}
+                    >
+                      {social.icon}
+                    </a>
+                  ))}
+                </div>
               </div>
             </div>
           </div>

@@ -170,6 +170,21 @@
     clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
   }
 
+  /* Gradient animation */
+  .animate-gradient-x {
+    animation: gradient-x 3s ease infinite;
+    background-size: 200% 200%;
+  }
+
+  @keyframes gradient-x {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
   /* Glassmorphism effects */
   .glass {
     backdrop-filter: blur(16px) saturate(180%);
