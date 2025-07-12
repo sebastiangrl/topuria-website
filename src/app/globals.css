@@ -1,28 +1,195 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-/* Paleta de colores personalizada para Topuria */
-@theme inline {
-  --color-spanish-red: #C60B1E;
-  --color-spanish-gold: #FFC400;
-  --color-deep-black: #000000;
-  --color-pure-white: #FFFFFF;
-  --color-dark-red: #8B0000;
-  --color-gold: #FFD700;
-  --color-soft-white: #F8F9FA;
-  --color-soft-black: #1A1A1A;
-  --color-light-gray: #E5E5E5;
-  --color-dark-gray: #333333;
+@custom-variant dark (&:is(.dark *));
+
+/* Shadcn/ui color system with Topuria theme */
+:root {
+  /* Base colors (shadcn system) */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --radius: 0.625rem;
+
+  /* Chart colors */
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+
+  /* Topuria Custom Colors */
+  --spanish-red: oklch(0.45 0.22 27);
+  --spanish-gold: oklch(0.85 0.15 85);
+  --deep-black: oklch(0.1 0 0);
+  --pure-white: oklch(1 0 0);
+  --dark-red: oklch(0.35 0.25 27);
+  --gold: oklch(0.9 0.12 85);
+  --soft-white: oklch(0.98 0 0);
+  --soft-black: oklch(0.15 0 0);
+  --light-gray: oklch(0.92 0 0);
+  --dark-gray: oklch(0.25 0 0);
 }
 
-/* Base styles */
+.dark {
+  --background: oklch(0.08 0 0);
+  --foreground: oklch(0.98 0 0);
+  --card: oklch(0.08 0 0);
+  --card-foreground: oklch(0.98 0 0);
+  --popover: oklch(0.08 0 0);
+  --popover-foreground: oklch(0.98 0 0);
+  --primary: oklch(0.98 0 0);
+  --primary-foreground: oklch(0.08 0 0);
+  --secondary: oklch(0.13 0 0);
+  --secondary-foreground: oklch(0.98 0 0);
+  --muted: oklch(0.13 0 0);
+  --muted-foreground: oklch(0.67 0 0);
+  --accent: oklch(0.13 0 0);
+  --accent-foreground: oklch(0.98 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.18 0 0);
+  --input: oklch(0.18 0 0);
+  --ring: oklch(0.67 0 0);
+}
+
+/* Tailwind v4 theme mapping */
+@theme inline {
+  /* Map shadcn variables to Tailwind utilities */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Custom Topuria colors */
+  --color-spanish-red: var(--spanish-red);
+  --color-spanish-gold: var(--spanish-gold);
+  --color-deep-black: var(--deep-black);
+  --color-pure-white: var(--pure-white);
+  --color-dark-red: var(--dark-red);
+  --color-gold: var(--gold);
+  --color-soft-white: var(--soft-white);
+  --color-soft-black: var(--soft-black);
+  --color-light-gray: var(--light-gray);
+  --color-dark-gray: var(--dark-gray);
+
+  /* Border radius */
+  --border-radius-lg: calc(var(--radius) - 2px);
+  --border-radius-md: calc(var(--radius) - 4px);
+  --border-radius-sm: calc(var(--radius) - 8px);
+}
+
+/* Base layer styles */
 @layer base {
   * {
     @apply border-border;
   }
   
   body {
-    @apply bg-pure-white text-deep-black;
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-muted;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground;
+  }
+}
+
+/* Component layer for custom components */
+@layer components {
+  /* Hero gradients */
+  .hero-gradient {
+    background: linear-gradient(
+      135deg,
+      var(--pure-white) 0%,
+      var(--spanish-red) 50%,
+      var(--deep-black) 100%
+    );
+  }
+
+  .gold-gradient {
+    background: linear-gradient(
+      45deg,
+      var(--spanish-gold) 0%,
+      var(--gold) 100%
+    );
+  }
+
+  /* Text animations */
+  .text-reveal {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+  }
+
+  /* Glassmorphism effects */
+  .glass {
+    backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-dark {
+    backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Hover effects */
+  .hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   }
 }
