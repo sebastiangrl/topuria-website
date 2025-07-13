@@ -18,13 +18,11 @@ export default function Logo({
   variant = 'default',
   showText = true
 }: LogoProps) {
-  const sizeClasses = {
+  const currentSize = {
     sm: { mark: 'w-8 h-8', text: 'text-sm', subtext: 'text-xs' },
     md: { mark: 'w-12 h-12', text: 'text-xl', subtext: 'text-xs' },
     lg: { mark: 'w-16 h-16', text: 'text-2xl', subtext: 'text-sm' }
-  }
-
-  const currentSize = sizeClasses[size]
+  }[size]
 
   return (
     <Link href="/" className="block">

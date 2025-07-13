@@ -3,7 +3,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { Trophy, Crown, Star, Shield } from 'lucide-react'
+import { Trophy, Crown } from 'lucide-react'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import type { Variants } from 'framer-motion'
@@ -27,7 +27,7 @@ interface SimpleStat {
 interface MiniCard {
   title: string
   subtitle: string
-  icon: any
+  icon: typeof Crown
 }
 
 const circularStats: CircularStat[] = [

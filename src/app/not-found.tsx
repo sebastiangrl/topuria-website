@@ -129,7 +129,7 @@ export default function NotFound() {
           </h2>
           <p className="text-lg text-muted-foreground max-w-md mx-auto leading-relaxed">
             Looks like this page got knocked out! Even champions miss sometimes, 
-            but we'll help you get back in the ring.
+            but we&apos;ll help you get back in the ring.
           </p>
         </motion.div>
 
@@ -199,7 +199,7 @@ export default function NotFound() {
               { label: 'Stats', href: '/#stats' },
               { label: 'Gallery', href: '/#gallery' },
               { label: 'Contact', href: '/#contact' }
-            ].map((link, index) => (
+            ].map((link) => (
               <motion.div
                 key={link.label}
                 whileHover={{ scale: 1.05 }}

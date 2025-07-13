@@ -202,7 +202,7 @@ export default function Loading() {
               ease: 'easeInOut'
             }}
           >
-            Loading the champion's legacy...
+            Loading the champion&apos;s legacy...
           </motion.p>
         </motion.div>
 
@@ -224,9 +224,9 @@ export default function Loading() {
           variants={textVariants}
           className="flex justify-center space-x-1 mt-6"
         >
-          {[0, 1, 2].map((index) => (
+          {[0, 1, 2].map(() => (
             <motion.div
-              key={index}
+              key={Math.random()}
               className="w-2 h-2 bg-spanish-red rounded-full"
               animate={{
                 scale: [1, 1.2, 1],
@@ -235,7 +235,7 @@ export default function Loading() {
               transition={{
                 duration: 1,
                 repeat: Infinity,
-                delay: index * 0.2,
+                delay: Math.random() * 0.6,
                 ease: 'easeInOut'
               }}
             />

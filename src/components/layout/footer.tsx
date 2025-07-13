@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
-import { SOCIAL_LINKS, SITE_CONFIG, NAV_ITEMS } from '@/lib/constants'
+import { SOCIAL_LINKS, NAV_ITEMS } from '@/lib/constants'
 import Logo from '@/components/common/logo'
 import type { Variants } from 'framer-motion'
 
@@ -156,12 +156,11 @@ export default function Footer() {
 
               {/* Social Links */}
               <div className="flex items-center space-x-4">
-                {socialLinks.map((social, index) => (
+                {socialLinks.map((social) => (
                   <motion.div
                     key={social.name}
                     variants={socialVariants}
                     whileHover="hover"
-                    custom={index}
                   >
                     <Button
                       variant="ghost"

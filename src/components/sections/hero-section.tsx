@@ -1,19 +1,17 @@
 // src/components/sections/hero-section.tsx
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { Crown, Trophy, Zap, Target, ArrowDown } from 'lucide-react'
+import { Crown, Trophy, ArrowDown } from 'lucide-react'
 import Image from 'next/image'
-import { cn } from '@/lib/utils'
-import { FIGHTER_INFO, FIGHT_STATS, CAREER_HIGHLIGHTS } from '@/lib/constants'
+import { FIGHTER_INFO, CAREER_HIGHLIGHTS } from '@/lib/constants'
 import { useMounted } from '@/hooks/use-mounted'
 import { useUFCStatsSimple } from '@/hooks/use-ufc-stats'
 import type { Variants } from 'framer-motion'
 
 export default function HeroSection() {
   const mounted = useMounted()
-  const containerRef = useRef<HTMLDivElement>(null)
   
   // UFC stats simplificado
   const baseStats = useUFCStatsSimple()
@@ -25,15 +23,9 @@ export default function HeroSection() {
   const [finishRateCount, setFinishRateCount] = useState(0)
   
   // Scroll effects
-  const { scrollYProgress } = useScroll(
-    mounted ? {
-      target: containerRef,
-      offset: ["start start", "end start"]
-    } : undefined
-  )
+  const { scrollYProgress } = useScroll()
 
   const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"])
-  const beltRotation = useTransform(scrollYProgress, [0, 1], [0, 180])
 
   // Stats actuales
   const currentStats = {
@@ -47,8 +39,6 @@ export default function HeroSection() {
     finishRate: Math.round(((baseStats.finishes.koTko + baseStats.finishes.submissions) / baseStats.record.wins) * 100),
     strikesPMinute: 4.69
   }
-
-  const latestFight = CAREER_HIGHLIGHTS[0]
 
   // Animación de contadores
   useEffect(() => {
@@ -142,18 +132,6 @@ export default function HeroSection() {
     }
   }
 
-  const floatingBelt: Variants = {
-    animate: {
-      y: [-10, 10, -10],
-      rotate: [-3, 3, -3],
-      transition: {
-        duration: 3,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }
-    }
-  }
-
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id)
     if (element) {
@@ -174,7 +152,6 @@ export default function HeroSection() {
 
   return (
     <section
-      ref={containerRef}
       id="home"
       className="relative h-screen overflow-hidden bg-background flex items-center"
     >
@@ -235,7 +212,7 @@ export default function HeroSection() {
                 variants={fadeInUp}
                 className="flex items-center gap-3 text-xl md:text-2xl"
               >
-                <span className="text-topuria-gold font-bold">"EL MATADOR"</span>
+                <span className="text-topuria-gold font-bold">&ldquo;EL MATADOR&rdquo;</span>
                 <div className="w-2 h-2 bg-topuria-red animate-pulse" />
                 <span className="text-muted-foreground">#{currentStats.ranking} P4P</span>
               </motion.div>

@@ -2,9 +2,8 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { motion, useScroll, useTransform, useInView } from 'framer-motion'
+import { motion, useInView } from 'framer-motion'
 import { MapPin, Trophy, Star, Flag, Zap, Medal, Heart, Crown, Calendar, ChevronLeft, ChevronRight } from 'lucide-react'
-import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import type { Variants } from 'framer-motion'
 
@@ -18,7 +17,7 @@ interface TimelineEvent {
   details: string[]
   location: string
   category: 'origen' | 'formacion' | 'profesional' | 'ufc' | 'campeon'
-  icon: any
+  icon: typeof MapPin
   backgroundImage: string
   color: string
 }
@@ -224,7 +223,7 @@ const CategoryIcon = ({ category }: { category: string }) => {
     campeon: Crown
   }
   
-  const Icon = icons[category as keyof typeof icons]
+  const Icon = icons[category as keyof typeof icons] || MapPin
   return <Icon className="w-5 h-5" />
 }
 
@@ -232,7 +231,6 @@ export default function AboutSection() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
   const sectionRef = useRef<HTMLDivElement>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
   const isInView = useInView(sectionRef, { once: true, margin: "-200px" })
 
   const currentEvent = timelineEvents[currentIndex]

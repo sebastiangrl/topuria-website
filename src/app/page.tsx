@@ -12,7 +12,7 @@ import GallerySection from '@/components/sections/gallery-section'
 
 export const metadata: Metadata = {
   title: 'Ilia Topuria - UFC Lightweight Champion',
-  description: 'Official website of Ilia Topuria, undefeated UFC Lightweight Champion from Georgia and Spain. El Matador\'s journey to the top.',
+  description: 'Official website of Ilia Topuria, undefeated UFC Lightweight Champion from Georgia and Spain. El Matador&apos;s journey to the top.',
 }
 
 export default function HomePage() {

@@ -3,7 +3,7 @@
 
 import { useState, useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { Calendar, MapPin, Trophy } from 'lucide-react'
+import { Calendar, MapPin } from 'lucide-react'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import type { Variants } from 'framer-motion'

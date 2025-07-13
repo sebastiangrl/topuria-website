@@ -72,12 +72,12 @@ class UFCService {
     name: 'Ilia Topuria',
     nickname: 'El Matador',
     record: {
-      wins: 16,
+      wins: 17,
       losses: 0,
       draws: 0
     },
     finishes: {
-      koTko: 7,
+      koTko: 8,
       submissions: 8,
       decisions: 1
     },
@@ -152,10 +152,10 @@ class UFCService {
   /**
    * Obtiene las estadísticas actuales de Ilia Topuria
    */
-  async getFighterStats(fighterId: string = 'ilia-topuria'): Promise<FighterStats> {
+  async getFighterStats(): Promise<FighterStats> {
     try {
       // Intentar múltiples fuentes de datos
-      const stats = await this.fetchFromMultipleSources(fighterId)
+      const stats = await this.fetchFromMultipleSources()
       return stats || this.fallbackData
     } catch (error) {
       console.warn('Error fetching fighter stats, using fallback data:', error)
@@ -166,11 +166,11 @@ class UFCService {
   /**
    * Busca datos de múltiples fuentes
    */
-  private async fetchFromMultipleSources(fighterId: string): Promise<FighterStats | null> {
+  private async fetchFromMultipleSources(): Promise<FighterStats | null> {
     const sources = [
-      () => this.fetchFromESPN(fighterId),
-      () => this.fetchFromUFCStats(fighterId),
-      () => this.fetchFromSherdog(fighterId)
+      () => this.fetchFromESPN(),
+      () => this.fetchFromUFCStats(),
+      () => this.fetchFromSherdog()
     ]
 
     for (const source of sources) {
@@ -191,10 +191,10 @@ class UFCService {
   /**
    * Fetch desde ESPN API
    */
-  private async fetchFromESPN(fighterId: string): Promise<FighterStats | null> {
+  private async fetchFromESPN(): Promise<FighterStats | null> {
     try {
       const response = await fetch(
-        `https://site.api.espn.com/apis/site/v2/sports/mma/ufc/athletes/${fighterId}`,
+        `https://site.api.espn.com/apis/site/v2/sports/mma/ufc/athletes/ilia-topuria`,
         {
           headers: {
             'User-Agent': 'Mozilla/5.0 (compatible; TopuriaWebsite/1.0)'
@@ -217,7 +217,7 @@ class UFCService {
   /**
    * Fetch desde UFC Stats
    */
-  private async fetchFromUFCStats(fighterId: string): Promise<FighterStats | null> {
+  private async fetchFromUFCStats(): Promise<FighterStats | null> {
     try {
       // UFC Stats no tiene API pública, usaríamos web scraping
       // Por ahora, usamos datos estáticos actualizados
@@ -231,7 +231,7 @@ class UFCService {
   /**
    * Fetch desde Sherdog
    */
-  private async fetchFromSherdog(fighterId: string): Promise<FighterStats | null> {
+  private async fetchFromSherdog(): Promise<FighterStats | null> {
     try {
       // Sherdog tampoco tiene API pública
       // Usaríamos web scraping o datos estáticos
@@ -245,43 +245,71 @@ class UFCService {
   /**
    * Parse data from ESPN
    */
-  private parseESPNData(data: any): FighterStats {
+  private parseESPNData(data: Record<string, unknown>): FighterStats {
     try {
-      const athlete = data.athlete || data
+      const athlete = (data.athlete || data) as Record<string, unknown>
       
       return {
         id: athlete.id?.toString() || 'ilia-topuria',
-        name: athlete.displayName || 'Ilia Topuria',
-        nickname: athlete.nickname || 'El Matador',
+        name: athlete.displayName as string || 'Ilia Topuria',
+        nickname: athlete.nickname as string || 'El Matador',
         record: {
-          wins: parseInt(athlete.record?.wins) || 16,
-          losses: parseInt(athlete.record?.losses) || 0,
-          draws: parseInt(athlete.record?.draws) || 0
+          wins: parseInt(
+            typeof athlete.record === 'object' && athlete.record !== null
+              ? (athlete.record as Record<string, unknown>).wins as string
+              : ''
+          ) || 17,
+          losses: parseInt(
+            typeof athlete.record === 'object' && athlete.record !== null
+              ? (athlete.record as Record<string, unknown>).losses as string
+              : ''
+          ) || 0,
+          draws: parseInt(
+            typeof athlete.record === 'object' && athlete.record !== null
+              ? (athlete.record as Record<string, unknown>).draws as string
+              : ''
+          ) || 0
         },
         finishes: {
-          koTko: parseInt(athlete.statistics?.knockouts) || 7,
-          submissions: parseInt(athlete.statistics?.submissions) || 8,
-          decisions: parseInt(athlete.statistics?.decisions) || 1
+          koTko: parseInt(
+            typeof athlete.statistics === 'object' && athlete.statistics !== null
+              ? (athlete.statistics as Record<string, unknown>).knockouts as string
+              : ''
+          ) || 8,
+          submissions: parseInt(
+            typeof athlete.statistics === 'object' && athlete.statistics !== null
+              ? (athlete.statistics as Record<string, unknown>).submissions as string
+              : ''
+          ) || 8,
+          decisions: parseInt(
+            typeof athlete.statistics === 'object' && athlete.statistics !== null
+              ? (athlete.statistics as Record<string, unknown>).decisions as string
+              : ''
+          ) || 1
         },
-        titles: athlete.titles || ['UFC Lightweight Champion'],
+        titles: athlete.titles as string[] || ['UFC Lightweight Champion'],
         ranking: {
-          position: parseInt(athlete.ranking?.position) || 1,
-          weightClass: athlete.weightClass || 'Lightweight',
-          poundForPound: parseInt(athlete.p4pRanking) || 1
+          position: parseInt(
+            typeof athlete.ranking === 'object' && athlete.ranking !== null
+              ? (athlete.ranking as Record<string, unknown>).position as string
+              : ''
+          ) || 1,
+          weightClass: athlete.weightClass as string || 'Lightweight',
+          poundForPound: parseInt(athlete.p4pRanking as string) || 1
         },
         physicalStats: {
-          height: athlete.height || "5'7\"",
-          weight: athlete.weight || '155 lbs',
-          reach: athlete.reach || "69\"",
-          stance: athlete.stance || 'Orthodox'
+          height: athlete.height as string || "5'7\"",
+          weight: athlete.weight as string || '155 lbs',
+          reach: athlete.reach as string || "69\"",
+          stance: athlete.stance as string || 'Orthodox'
         },
         birthInfo: {
-          date: athlete.birthDate || '1997-01-21',
-          place: athlete.birthPlace || 'Halle, Germany',
-          age: this.calculateAge(athlete.birthDate || '1997-01-21')
+          date: athlete.birthDate as string || '1997-01-21',
+          place: athlete.birthPlace as string || 'Halle, Germany',
+          age: this.calculateAge(athlete.birthDate as string || '1997-01-21')
         },
-        nationality: athlete.nationality || ['Georgian', 'Spanish'],
-        fightingOutOf: athlete.fightingOutOf || 'Madrid, Spain',
+        nationality: athlete.nationality as string[] || ['Georgian', 'Spanish'],
+        fightingOutOf: athlete.fightingOutOf as string || 'Madrid, Spain',
         recentFights: this.fallbackData.recentFights
       }
     } catch (error) {
@@ -331,7 +359,7 @@ class UFCService {
   /**
    * Busca próxima pelea de un luchador
    */
-  async getNextFight(fighterId: string): Promise<Fight | null> {
+  async getNextFight(): Promise<Fight | null> {
     try {
       const events = await this.getUpcomingEvents()
       
@@ -339,7 +367,7 @@ class UFCService {
         const allFights = [...event.mainCard, ...event.prelimCard]
         const fight = allFights.find(fight => 
           fight.opponent.toLowerCase().includes('topuria') ||
-          fight.id.includes(fighterId)
+          fight.id.includes('ilia-topuria')
         )
         
         if (fight) {
@@ -357,15 +385,17 @@ class UFCService {
   /**
    * Actualiza datos en tiempo real
    */
-  async refreshData(fighterId: string): Promise<FighterStats> {
+  async refreshData(): Promise<FighterStats> {
     try {
-      const freshData = await this.getFighterStats(fighterId)
+      const freshData = await this.getFighterStats()
       
       // Aquí podrías agregar lógica para cachear los datos
-      localStorage.setItem(`fighter_${fighterId}`, JSON.stringify({
-        data: freshData,
-        timestamp: Date.now()
-      }))
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('fighter_ilia-topuria', JSON.stringify({
+          data: freshData,
+          timestamp: Date.now()
+        }))
+      }
       
       return freshData
     } catch (error) {
