@@ -31,17 +31,16 @@ interface FighterCardProps {
   fighterData: FighterData
 }
 
-export function FighterCard({ 
-  nombre, 
-  imagen, 
-  resultado, 
-  isWinner, 
-  onClick, 
-  stats, 
-  fighterData 
+export function FighterCard({
+  nombre,
+  imagen,
+  resultado,
+  isWinner,
+  onClick,
+  stats,
+  fighterData
 }: FighterCardProps) {
   const precision = stats.golpesTotales > 0 ? Math.round((stats.golpesConectados / stats.golpesTotales) * 100) : 0
-  const takedownAccuracy = stats.intentosTakedown > 0 ? Math.round((stats.takedowns / stats.intentosTakedown) * 100) : 0
 
   return (
     <motion.div
@@ -79,8 +78,8 @@ export function FighterCard({
       <div className="text-center">
         <div className={cn(
           'inline-block px-6 py-3 font-black text-lg uppercase tracking-wider border-2',
-          isWinner 
-            ? 'bg-topuria-red text-topuria-white border-topuria-red' 
+          isWinner
+            ? 'bg-topuria-red text-topuria-white border-topuria-red'
             : 'bg-gray-800 text-gray-300 border-gray-600'
         )}>
           {resultado}

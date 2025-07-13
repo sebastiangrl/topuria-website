@@ -106,13 +106,14 @@ export function FightModal({ pelea, isOpen, onClose, isTopuria, fighterImage }: 
                 {/* Imagen y nombre */}
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 relative border border-gray-300 overflow-hidden">
-                    <img
+                    <Image
                       src={currentFaceImage}
                       alt={currentName}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
-                        target.src = '/images/default-face.jpg';
+                        target.style.display = 'none';
                       }}
                     />
                   </div>

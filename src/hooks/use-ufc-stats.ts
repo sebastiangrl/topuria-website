@@ -2,7 +2,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { FIGHTER_INFO, FIGHT_STATS, CAREER_HIGHLIGHTS } from '@/lib/constants'
+import { FIGHTER_INFO, FIGHT_STATS } from '@/lib/constants'
 
 export interface UFCFighterStats {
   record: {
@@ -52,7 +52,7 @@ const TOPURIA_STATS: UFCFighterStats = {
   }
 }
 
-export function useUFCStats(options: UseUFCStatsOptions = {}): UseUFCStatsResult {
+export function useUFCStats(): UseUFCStatsResult {
   const [stats, setStats] = useState<UFCFighterStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -68,7 +68,7 @@ export function useUFCStats(options: UseUFCStatsOptions = {}): UseUFCStatsResult
         await new Promise(resolve => setTimeout(resolve, 100))
         
         setStats(TOPURIA_STATS)
-      } catch (err) {
+      } catch {
         setError('Error loading stats')
         setStats(TOPURIA_STATS) // Fallback
       } finally {

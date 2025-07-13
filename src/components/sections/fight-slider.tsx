@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import Image from 'next/image'
 
 interface FighterStats {
   golpesConectados: number
@@ -116,10 +117,11 @@ export function FightSlider({ peleas, peleaSeleccionada, onSelectPelea }: FightS
           >
             {/* Opponent Face - A la izquierda y MÁS GRANDE */}
             <div className="flex-shrink-0 w-10 h-10 border border-white bg-gray-900 overflow-hidden">
-              <img
+              <Image
                 src={`/images/faces/face-${pelea.oponente.toLowerCase().replace(' ', '-')}.webp`}
                 alt={`${pelea.oponente} face`}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.style.display = 'none';

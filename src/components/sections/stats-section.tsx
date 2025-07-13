@@ -5,8 +5,6 @@ import { useState, useRef, useEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { Trophy, Crown } from 'lucide-react'
 import Image from 'next/image'
-import { cn } from '@/lib/utils'
-import type { Variants } from 'framer-motion'
 
 interface CircularStat {
   id: string
@@ -158,7 +156,7 @@ const CircularProgress = ({ stat, delay = 0 }: { stat: CircularStat; delay?: num
   useEffect(() => {
     if (isInView) {
       const timer = setTimeout(() => {
-        let start = 0
+        const start = 0
         const end = stat.percentage
         const duration = 2000
         const startTime = Date.now()

@@ -148,7 +148,7 @@ export default function GallerySection() {
     setSelectedImage(filteredImages[currentImageIndex === 0 ? filteredImages.length - 1 : currentImageIndex - 1])
   }
 
-  const getGridItemClass = (image: GalleryImage, index: number) => {
+  const getGridItemClass = (image: GalleryImage) => {
     if (image.featured) {
       return 'col-span-1 row-span-2 md:col-span-2 md:row-span-2'
     }
@@ -248,7 +248,7 @@ export default function GallerySection() {
                 }}
                 className={cn(
                   'relative group cursor-pointer overflow-hidden bg-gray-100',
-                  getGridItemClass(image, index)
+                  getGridItemClass(image)
                 )}
                 onClick={() => openLightbox(image)}
               >
