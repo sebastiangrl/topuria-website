@@ -242,7 +242,7 @@ const StatCard = ({ stat, index }: { stat: SimpleStat; index: number }) => {
     if (isInView) {
       const timer = setTimeout(() => {
         if (!isNaN(Number(stat.value))) {
-          let start = 0
+          const start = 0
           const end = Number(stat.value)
           const duration = 1500
           const startTime = Date.now()

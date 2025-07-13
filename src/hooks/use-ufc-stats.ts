@@ -22,11 +22,6 @@ export interface UFCFighterStats {
   }
 }
 
-interface UseUFCStatsOptions {
-  fighterId?: string
-  autoRefresh?: boolean
-}
-
 interface UseUFCStatsResult {
   stats: UFCFighterStats | null
   loading: boolean
