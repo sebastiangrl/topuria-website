@@ -52,9 +52,9 @@ export const NAV_ITEMS = [
     id: 'home'
   },
   {
-    label: 'About',
-    href: '#about',
-    id: 'about'
+    label: 'Stats',
+    href: '#stats',
+    id: 'stats'
   },
   {
     label: 'Career',
@@ -62,20 +62,10 @@ export const NAV_ITEMS = [
     id: 'career'
   },
   {
-    label: 'Stats',
-    href: '#stats',
-    id: 'stats'
-  },
-  {
     label: 'Gallery',
     href: '#gallery',
     id: 'gallery'
-  },
-  {
-    label: 'Contact',
-    href: '#contact',
-    id: 'contact'
-  },
+  }
 ] as const
 
 // UFC Career highlights

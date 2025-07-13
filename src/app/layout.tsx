@@ -2,7 +2,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter, Poppins } from 'next/font/google'
 import './globals.css'
-import { ThemeProvider } from '@/components/layout/theme-provider'
 import { Toaster } from '@/components/ui/sonner'
 
 // Optimized font loading
@@ -107,8 +106,6 @@ export const metadata: Metadata = {
 
   // Additional meta tags
   other: {
-    'theme-color': '#C60B1E',
-    'color-scheme': 'light dark',
     'mobile-web-app-capable': 'yes',
     'apple-mobile-web-app-capable': 'yes',
     'apple-mobile-web-app-status-bar-style': 'black-translucent',
@@ -121,10 +118,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   userScalable: true,
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)', color: '#000000' },
-  ],
+  themeColor: '#C60B1E',
 }
 
 // JSON-LD Structured Data
@@ -195,33 +189,26 @@ export default function RootLayout({ children }: RootLayoutProps) {
       </head>
       
       <body className="min-h-screen bg-background font-sans antialiased">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
+        {/* Skip to main content for accessibility */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary text-primary-foreground px-4 py-2 rounded-md z-50"
         >
-          {/* Skip to main content for accessibility */}
-          <a
-            href="#main-content"
-            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary text-primary-foreground px-4 py-2 rounded-md z-50"
-          >
-            Skip to main content
-          </a>
-          
-          {/* Main application */}
-          <div className="relative flex min-h-screen flex-col">
-            {children}
-          </div>
-          
-          {/* Toast notifications */}
-          <Toaster 
-            position="bottom-right"
-            theme="system"
-            richColors
-            closeButton
-          />
-        </ThemeProvider>
+          Skip to main content
+        </a>
+        
+        {/* Main application */}
+        <div className="relative flex min-h-screen flex-col">
+          {children}
+        </div>
+        
+        {/* Toast notifications */}
+        <Toaster 
+          position="bottom-right"
+          theme="light"
+          richColors
+          closeButton
+        />
         
         {/* Analytics and tracking scripts */}
         {process.env.NODE_ENV === 'production' && (

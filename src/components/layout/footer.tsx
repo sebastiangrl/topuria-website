@@ -2,14 +2,31 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Instagram, Twitter, Youtube, ExternalLink, Heart, Crown } from 'lucide-react'
+import { Instagram, Youtube} from 'lucide-react'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
-import { cn } from '@/lib/utils'
-import { SOCIAL_LINKS, NAV_ITEMS } from '@/lib/constants'
-import Logo from '@/components/common/logo'
 import type { Variants } from 'framer-motion'
+
+// Custom X (Twitter) Icon Component
+const XIcon = ({ className }: { className?: string }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 512 512" 
+    className={className}
+    fill="currentColor"
+  >
+    <path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"/>
+  </svg>
+)
+
+const TikTokIcon = ({ className }: { className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 448 512"
+    className={className}
+    fill="currentColor"
+  >
+    <path d="M448 209.9a210.1 210.1 0 0 1 -122.8-39.3V349.4A162.6 162.6 0 1 1 185 188.3V278.2a74.6 74.6 0 1 0 52.2 71.2V0l88 0a121.2 121.2 0 0 0 1.9 22.2h0A122.2 122.2 0 0 0 381 102.4a121.4 121.4 0 0 0 67 20.1z"/>
+  </svg>
+)
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
@@ -17,39 +34,34 @@ export default function Footer() {
   const socialLinks = [
     {
       name: 'Instagram',
-      href: SOCIAL_LINKS.instagram,
-      icon: Instagram,
-      color: 'hover:text-pink-500'
+      href: 'https://www.instagram.com/iliatopuria/',
+      icon: Instagram
     },
     {
-      name: 'Twitter',
-      href: SOCIAL_LINKS.twitter,
-      icon: Twitter,
-      color: 'hover:text-blue-400'
+      name: 'X',
+      href: 'https://x.com/topuriailia',
+      icon: XIcon
     },
     {
       name: 'YouTube',
-      href: SOCIAL_LINKS.youtube,
-      icon: Youtube,
-      color: 'hover:text-red-500'
+      href: 'https://www.youtube.com/@iliatopuriaufc',
+      icon: Youtube
     },
     {
-      name: 'UFC Profile',
-      href: SOCIAL_LINKS.ufc,
-      icon: ExternalLink,
-      color: 'hover:text-spanish-red'
+      name: 'TikTok',
+      href: 'https://www.tiktok.com/@iliatopuria',
+      icon: TikTokIcon
     }
   ]
 
-  const footerVariants: Variants = {
-    hidden: { opacity: 0, y: 50 },
+  const containerVariants: Variants = {
+    hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.6,
-        ease: "easeOut",
-        staggerChildren: 0.1
+        duration: 0.8,
+        staggerChildren: 0.2
       }
     }
   }
@@ -60,253 +72,141 @@ export default function Footer() {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.4,
+        duration: 0.6,
         ease: "easeOut"
       }
     }
-  }
-
-  const socialVariants: Variants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.3,
-        ease: "easeOut"
-      }
-    },
-    hover: {
-      scale: 1.1,
-      y: -2,
-      transition: {
-        duration: 0.2,
-        ease: "easeOut"
-      }
-    }
-  }
-
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id)
-    if (element) {
-      const headerHeight = 80
-      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
-      const offsetPosition = elementPosition - headerHeight
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      })
-    }
-  }
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    })
   }
 
   return (
-    <footer className="relative bg-gradient-to-br from-background via-background to-muted border-t border-border">
-      {/* Background Pattern */}
+    <footer className="relative bg-topuria-black text-topuria-white py-16">
+      {/* Subtle pattern overlay */}
       <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--spanish-red)_1px,_transparent_1px)] bg-[length:24px_24px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_white_1px,_transparent_1px)] bg-[length:40px_40px]" />
       </div>
 
       <motion.div
-        variants={footerVariants}
+        variants={containerVariants}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
         className="relative"
       >
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+        <div className="container mx-auto px-6 lg:px-8">
+          <div className="text-center space-y-12">
             
-            {/* Brand Section */}
-            <motion.div variants={itemVariants} className="lg:col-span-2">
-              <div className="mb-6">
-                <Logo size="lg" />
-              </div>
-              
-              <p className="text-muted-foreground leading-relaxed mb-6 max-w-md">
-                UFC Featherweight Champion from Georgia and Spain. Undefeated record with devastating knockout power. 
-                <span className="text-spanish-red font-semibold"> El Matador</span> continues his dominant reign.
+            {/* Main Title */}
+            <motion.div variants={itemVariants}>
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-topuria-white mb-4">
+                ILIA TOPURIA
+              </h2>
+              <p className="text-topuria-gold/80 text-lg md:text-xl font-medium italic">
+                &ldquo;El Matador&rdquo;
               </p>
+            </motion.div>
 
-              {/* Champion Stats */}
-              <div className="flex items-center space-x-6 mb-6">
+            {/* Key Stats */}
+            <motion.div variants={itemVariants}>
+              <div className="flex justify-center items-center gap-12 md:gap-16">
                 <div className="text-center">
-                  <div className="flex items-center justify-center mb-1">
-                    <Crown className="h-4 w-4 text-spanish-gold mr-1" />
-                    <span className="text-2xl font-bold text-foreground">15</span>
+                  <div className="text-3xl md:text-4xl font-black text-topuria-white mb-2">
+                    17-0-0
                   </div>
-                  <span className="text-xs text-muted-foreground uppercase tracking-wide">Wins</span>
+                  <div className="text-sm uppercase tracking-widest text-topuria-white/60">
+                    Invicto
+                  </div>
                 </div>
+                
+                <div className="w-px h-16 bg-topuria-white/20" />
+                
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-foreground">0</div>
-                  <span className="text-xs text-muted-foreground uppercase tracking-wide">Losses</span>
+                  <div className="text-3xl md:text-4xl font-black text-topuria-gold mb-2">
+                    #1
+                  </div>
+                  <div className="text-sm uppercase tracking-widest text-topuria-white/60">
+                    P4P Mundial
+                  </div>
                 </div>
+                
+                <div className="w-px h-16 bg-topuria-white/20" />
+                
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-spanish-red">10</div>
-                  <span className="text-xs text-muted-foreground uppercase tracking-wide">Finishes</span>
+                  <div className="text-3xl md:text-4xl font-black text-topuria-red mb-2">
+                    2
+                  </div>
+                  <div className="text-sm uppercase tracking-widest text-topuria-white/60">
+                    Cinturones
+                  </div>
                 </div>
               </div>
+            </motion.div>
 
-              {/* Social Links */}
-              <div className="flex items-center space-x-4">
-                {socialLinks.map((social) => (
+            {/* Social Links */}
+            <motion.div variants={itemVariants}>
+              <div className="flex justify-center items-center gap-6">
+                {socialLinks.map((social, index) => (
                   <motion.div
                     key={social.name}
-                    variants={socialVariants}
-                    whileHover="hover"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.6 + index * 0.1 }}
+                    whileHover={{ 
+                      scale: 1.1, 
+                      y: -4,
+                      transition: { duration: 0.2 }
+                    }}
                   >
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      asChild
-                      className={cn(
-                        'rounded-full bg-muted/50 hover:bg-muted transition-all duration-300',
-                        social.color
-                      )}
+                    <Link
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-12 h-12 bg-topuria-white/10 hover:bg-topuria-red transition-all duration-300 flex items-center justify-center group"
                     >
-                      <Link
-                        href={social.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label={`Follow on ${social.name}`}
-                      >
-                        <social.icon className="h-4 w-4" />
-                      </Link>
-                    </Button>
+                      <social.icon className="w-5 h-5 text-topuria-white group-hover:text-topuria-white" />
+                    </Link>
                   </motion.div>
                 ))}
               </div>
             </motion.div>
 
-            {/* Quick Links */}
+            {/* Separator */}
             <motion.div variants={itemVariants}>
-              <h3 className="text-lg font-semibold mb-4 text-foreground">
-                Quick Links
-              </h3>
-              <nav className="space-y-3">
-                {NAV_ITEMS.map((item) => (
-                  <motion.div
-                    key={item.id}
-                    whileHover={{ x: 4 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Button
-                      variant="ghost"
-                      onClick={() => scrollToSection(item.id)}
-                      className="h-auto p-0 justify-start text-muted-foreground hover:text-spanish-red transition-colors"
-                    >
-                      {item.label}
-                    </Button>
-                  </motion.div>
-                ))}
-              </nav>
+              <div className="w-24 h-px bg-topuria-white/20 mx-auto" />
             </motion.div>
 
-            {/* Contact & Legal */}
+            {/* Bottom Text */}
             <motion.div variants={itemVariants}>
-              <h3 className="text-lg font-semibold mb-4 text-foreground">
-                Contact
-              </h3>
-              <div className="space-y-3 text-sm text-muted-foreground">
-                <p>Management Inquiries</p>
-                <p>Press & Media</p>
-                <p>Sponsorship Opportunities</p>
-                
-                <div className="pt-4">
-                  <Button
-                    onClick={() => scrollToSection('contact')}
-                    className="bg-spanish-red hover:bg-dark-red text-white text-sm px-6 py-2 rounded-full transition-all duration-300 hover:scale-105"
-                  >
-                    Get in Touch
-                  </Button>
-                </div>
+              <div className="text-center text-topuria-white/60 text-sm">
+                <p className="mb-2">
+                  © {currentYear} Ilia Topuria. Todos los derechos reservados.
+                </p>
+                <p>
+                  Bicampeón UFC • Invicto • El Matador
+                </p>
               </div>
             </motion.div>
+
           </div>
-
-          <Separator className="my-8" />
-
-          {/* Bottom Section */}
-          <motion.div
-            variants={itemVariants}
-            className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0"
-          >
-            <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-              <span>© {currentYear} Ilia Topuria. All rights reserved.</span>
-              <Separator orientation="vertical" className="h-4" />
-              <Link 
-                href="/privacy" 
-                className="hover:text-spanish-red transition-colors"
-              >
-                Privacy Policy
-              </Link>
-              <Separator orientation="vertical" className="h-4" />
-              <Link 
-                href="/terms" 
-                className="hover:text-spanish-red transition-colors"
-              >
-                Terms of Service
-              </Link>
-            </div>
-
-            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-              <span>Made with</span>
-              <motion.div
-                animate={{
-                  scale: [1, 1.2, 1],
-                }}
-                transition={{
-                  duration: 1,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              >
-                <Heart className="h-4 w-4 text-spanish-red fill-current" />
-              </motion.div>
-              <span>by</span>
-              <Button
-                variant="ghost"
-                onClick={scrollToTop}
-                className="text-spanish-red hover:text-dark-red p-0 h-auto font-medium"
-              >
-                Team Topuria
-              </Button>
-            </div>
-          </motion.div>
         </div>
       </motion.div>
 
-      {/* Scroll to Top Button */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
-        className="absolute bottom-8 right-8"
-      >
-        <Button
-          onClick={scrollToTop}
-          size="icon"
-          className="rounded-full bg-spanish-red hover:bg-dark-red text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110"
-        >
-          <motion.div
-            animate={{ y: [-2, 2, -2] }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          >
-            ↑
-          </motion.div>
-        </Button>
-      </motion.div>
+      {/* Corner accent lines */}
+      <div className="absolute inset-0 pointer-events-none">
+        <motion.div
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 1, duration: 1.5 }}
+          className="absolute bottom-0 left-0 w-32 h-px bg-topuria-red origin-left"
+        />
+        <motion.div
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 1.2, duration: 1.5 }}
+          className="absolute bottom-0 right-0 w-32 h-px bg-topuria-gold origin-right"
+        />
+      </div>
     </footer>
   )
 }

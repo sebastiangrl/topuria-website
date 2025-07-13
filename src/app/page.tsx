@@ -5,9 +5,8 @@ import Header from '@/components/layout/header'
 import Footer from '@/components/layout/footer'
 import ScrollProgress from '@/components/interactive/scroll-progress'
 import HeroSection from '@/components/sections/hero-section'
-import AboutSection from '@/components/sections/about-section'
 import StatsSection from '@/components/sections/stats-section'
-import TimelineSection from '@/components/sections/timeline-section'
+import FightsSection from '@/components/sections/fights-section'
 import GallerySection from '@/components/sections/gallery-section'
 
 export const metadata: Metadata = {
@@ -39,21 +38,6 @@ export default function HomePage() {
           <HeroSection />
         </Suspense>
 
-        {/* About Section - Interactive Timeline */}
-        <Suspense fallback={
-          <section className="py-20 bg-muted/50 animate-pulse">
-            <div className="container mx-auto px-4">
-              <div className="max-w-4xl mx-auto text-center">
-                <div className="h-8 bg-muted rounded mb-4 mx-auto w-64"></div>
-                <div className="h-6 bg-muted rounded mb-8 mx-auto w-96"></div>
-                <div className="h-4 bg-muted rounded mx-auto w-full"></div>
-              </div>
-            </div>
-          </section>
-        }>
-          <AboutSection />
-        </Suspense>
-
         {/* Stats Section - Performance Dashboard */}
         <Suspense fallback={
           <section className="py-20 bg-background animate-pulse">
@@ -73,7 +57,7 @@ export default function HomePage() {
           <StatsSection />
         </Suspense>
 
-        {/* Timeline Section - Professional Career */}
+        {/* Fights Section - Professional Career */}
         <Suspense fallback={
           <section className="py-20 bg-muted/30 animate-pulse">
             <div className="container mx-auto px-4">
@@ -89,7 +73,7 @@ export default function HomePage() {
             </div>
           </section>
         }>
-          <TimelineSection />
+          <FightsSection />
         </Suspense>
 
         {/* Gallery Section - Visual Showcase */}

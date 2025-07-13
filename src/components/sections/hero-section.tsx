@@ -1,133 +1,106 @@
 // src/components/sections/hero-section.tsx
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { Crown, Trophy, ArrowDown } from 'lucide-react'
-import Image from 'next/image'
-import { FIGHTER_INFO } from '@/lib/constants'
-import { useMounted } from '@/hooks/use-mounted'
+import { Crown, ArrowDown, Play, Pause } from 'lucide-react'
 import { useUFCStatsSimple } from '@/hooks/use-ufc-stats'
 import type { Variants } from 'framer-motion'
 
 export default function HeroSection() {
-  const mounted = useMounted()
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [isPlaying, setIsPlaying] = useState(true)
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false)
   
   // UFC stats simplificado
   const baseStats = useUFCStatsSimple()
-
-  // Stats counters
-  const [winsCount, setWinsCount] = useState(0)
-  const [koCount, setKoCount] = useState(0)
-  const [subCount, setSubCount] = useState(0)
-  const [finishRateCount, setFinishRateCount] = useState(0)
   
   // Scroll effects
   const { scrollYProgress } = useScroll()
+  const titleY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"])
+  const overlayOpacity = useTransform(scrollYProgress, [0, 0.5], [0.3, 0.7])
+  
+  // Additional transforms for scroll effects
+  const transitionOpacity = useTransform(scrollYProgress, [0, 0.3], [0, 1])
+  const floatingImageY = useTransform(scrollYProgress, [0, 0.5], [100, -50])
+  const floatingImageOpacity = useTransform(scrollYProgress, [0.1, 0.3, 0.7], [0, 1, 0])
+  const floatingImageScale = useTransform(scrollYProgress, [0.1, 0.3], [0.8, 1])
 
-  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"])
-
-  // Stats actuales
+  // Stats actualizados 2025
   const currentStats = {
-    record: `${baseStats.record.wins}-${baseStats.record.losses}-${baseStats.record.draws}`,
-    wins: baseStats.record.wins,
-    koTko: baseStats.finishes.koTko,
-    submissions: baseStats.finishes.submissions,
-    titles: baseStats.titles,
-    ranking: baseStats.ranking.poundForPound,
-    weightClass: baseStats.ranking.weightClass,
-    finishRate: Math.round(((baseStats.finishes.koTko + baseStats.finishes.submissions) / baseStats.record.wins) * 100),
-    strikesPMinute: 4.69
+    record: "17-0-0", // Actualizado - invicto
+    wins: 17,
+    ranking: 1, // #1 P4P actual
+    weightClass: "Dos Divisiones", // Campeón de dos divisiones
+    titles: 2 // Peso pluma y peso ligero
   }
 
-  // Animación de contadores
-  useEffect(() => {
-    if (!mounted) return
-
-    const animateCounters = () => {
-      const duration = 2000
-      const startTime = Date.now()
-
-      const animate = () => {
-        const elapsed = Date.now() - startTime
-        const progress = Math.min(elapsed / duration, 1)
-
-        setWinsCount(Math.floor(currentStats.wins * progress))
-        setKoCount(Math.floor(currentStats.koTko * progress))
-        setSubCount(Math.floor(currentStats.submissions * progress))
-        setFinishRateCount(Math.floor(currentStats.finishRate * progress))
-
-        if (progress < 1) {
-          requestAnimationFrame(animate)
-        }
+  // Control de video
+  const toggleVideo = () => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause()
+      } else {
+        videoRef.current.play()
       }
-
-      const timeout = setTimeout(() => {
-        requestAnimationFrame(animate)
-      }, 800)
-
-      return () => clearTimeout(timeout)
+      setIsPlaying(!isPlaying)
     }
+  }
 
-    return animateCounters()
-  }, [mounted, currentStats.wins, currentStats.koTko, currentStats.submissions, currentStats.finishRate])
+  // Auto-play y loop del video
+  useEffect(() => {
+    if (videoRef.current && isVideoLoaded) {
+      videoRef.current.play().catch(() => {
+        // Si no se puede autoplay, no hacer nada
+        setIsPlaying(false)
+      })
+    }
+  }, [isVideoLoaded])
 
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
+        duration: 1.2,
+        staggerChildren: 0.2,
+        delayChildren: 0.3
+      }
+    }
+  }
+
+  const titleVariants: Variants = {
+    hidden: { opacity: 0, y: 60 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 1,
+        ease: [0.25, 0.46, 0.45, 0.94]
+      }
+    }
+  }
+
+  const subtitleVariants: Variants = {
+    hidden: { opacity: 0, x: -40 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: {
         duration: 0.8,
-        staggerChildren: 0.1,
-        delayChildren: 0.2
+        ease: "easeOut"
       }
     }
   }
 
-  const slideInLeft: Variants = {
-    hidden: { opacity: 0, x: -80 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: {
-        duration: 0.6,
-        ease: "backOut"
-      }
-    }
-  }
-
-  const slideInRight: Variants = {
-    hidden: { opacity: 0, x: 80 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: {
-        duration: 0.6,
-        ease: "backOut"
-      }
-    }
-  }
-
-  const fadeInUp: Variants = {
-    hidden: { opacity: 0, y: 40 },
+  const statsVariants: Variants = {
+    hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
         duration: 0.6,
-        ease: "backOut"
-      }
-    }
-  }
-
-  const scaleIn: Variants = {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.8,
-        ease: "backOut"
+        ease: "easeOut"
       }
     }
   }
@@ -139,317 +112,240 @@ export default function HeroSection() {
     }
   }
 
-  if (!mounted) {
-    return (
-      <div className="h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="w-16 h-16 mx-auto bg-topuria-red/20 animate-pulse" />
-          <div className="text-lg text-muted-foreground">Cargando El Matador...</div>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <section
       id="home"
-      className="relative h-screen overflow-hidden bg-background flex items-center"
+      className="relative h-screen overflow-hidden bg-background"
     >
-      {/* Background Effects */}
-      <div className="absolute inset-0 bg-gradient-to-br from-topuria-white via-gray-50 to-gray-100 dark:from-topuria-black dark:via-gray-900 dark:to-gray-800" />
-      
-      {/* Animated Grid */}
-      <div className="absolute inset-0 opacity-5">
+      {/* Video Background */}
+      <div className="absolute inset-0">
+        <video
+          ref={videoRef}
+          onLoadedData={() => setIsVideoLoaded(true)}
+          onEnded={() => {
+            if (videoRef.current) {
+              videoRef.current.currentTime = 0
+              videoRef.current.play()
+            }
+          }}
+          className="w-full h-full object-cover"
+          muted
+          playsInline
+          preload="metadata"
+        >
+          <source src="/videos/topuria-vs-charles.mp4" type="video/mp4" />
+        </video>
+        
+        {/* Heavy Dark Overlay for Sophisticated Look */}
+        <div className="absolute inset-0 bg-topuria-black/70" />
+        
+        {/* Gradient Overlay */}
         <motion.div
-          animate={{ 
-            backgroundPosition: ['0% 0%', '100% 100%'],
-            opacity: [0.2, 0.1, 0.2]
-          }}
-          transition={{ 
-            duration: 15, 
-            repeat: Infinity, 
-            ease: "linear" 
-          }}
-          className="w-full h-full bg-[linear-gradient(45deg,_transparent_24%,_var(--color-topuria-black)_25%,_var(--color-topuria-black)_26%,_transparent_27%,_transparent_74%,_var(--color-topuria-black)_75%,_var(--color-topuria-black)_76%,_transparent_77%,_transparent)] bg-[length:40px_40px]"
+          style={{ opacity: overlayOpacity }}
+          className="absolute inset-0 bg-gradient-to-t from-topuria-black via-topuria-black/80 to-topuria-black/50"
         />
+        
+        {/* Additional subtle texture overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-topuria-black/20 to-topuria-black/40" />
       </div>
+
+      {/* Video Controls - More Subtle */}
+      <motion.button
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.6 }}
+        whileHover={{ opacity: 1 }}
+        transition={{ delay: 2 }}
+        onClick={toggleVideo}
+        className="absolute top-6 right-6 z-30 bg-topuria-black/60 backdrop-blur-sm text-topuria-white/70 p-3 hover:bg-topuria-black/80 hover:text-topuria-white transition-all duration-500"
+      >
+        {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+      </motion.button>
 
       {/* Main Content */}
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="container mx-auto px-6 lg:px-8 relative z-10"
+        className="relative z-20 h-full flex items-center"
       >
-        <div className="grid lg:grid-cols-2 gap-8 items-center">
-          
-          {/* Left Side - Info & Stats */}
-          <motion.div variants={slideInLeft} className="space-y-6">
+        <div className="container mx-auto px-6 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center">
             
-            {/* Champion Badge */}
+            {/* Champion Badge - More Subtle */}
             <motion.div
-              initial={{ scale: 0, rotate: -180 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ delay: 0.4, duration: 0.5, type: "spring" }}
+              variants={subtitleVariants}
+              className="mb-8 flex justify-center"
             >
-              <div className="inline-flex items-center gap-2 bg-topuria-red text-topuria-white px-4 py-2 text-sm font-bold uppercase tracking-wider shadow-solid-sm">
-                <Crown className="w-4 h-4" />
-                Campeón UFC Peso Ligero
+              <div className="inline-flex items-center gap-3 bg-topuria-black/80 backdrop-blur-sm text-topuria-white/90 px-6 py-3 font-bold uppercase tracking-widest text-sm border border-topuria-white/10">
+                <Crown className="w-4 h-4 text-topuria-gold/70" />
+                Bicampeón UFC - Dos Divisiones
               </div>
             </motion.div>
 
-            {/* Main Title */}
-            <div className="space-y-3">
-              <motion.h1 
-                variants={fadeInUp}
-                className="text-display text-5xl md:text-6xl lg:text-7xl leading-none"
-              >
-                <span className="block text-foreground">ILIA</span>
-                <span className="block text-topuria-red">TOPURIA</span>
-              </motion.h1>
-              
-              <motion.div 
-                variants={fadeInUp}
-                className="flex items-center gap-3 text-xl md:text-2xl"
-              >
-                <span className="text-topuria-gold font-bold">&ldquo;EL MATADOR&rdquo;</span>
-                <div className="w-2 h-2 bg-topuria-red animate-pulse" />
-                <span className="text-muted-foreground">#{currentStats.ranking} P4P</span>
-              </motion.div>
-            </div>
-
-            {/* Fighter Info Grid */}
-            <motion.div 
-              variants={fadeInUp}
-              className="grid grid-cols-4 gap-3"
+            {/* Main Title - Bold and Centered */}
+            <motion.div
+              variants={titleVariants}
+              style={{ y: titleY }}
+              className="mb-12"
             >
-              <div className="text-center">
-                <div className="text-lg font-bold text-foreground">
-                  {FIGHTER_INFO.height}
-                </div>
-                <div className="text-xs text-muted-foreground uppercase tracking-wide">
-                  Altura
-                </div>
-              </div>
-              <div className="text-center">
-                <div className="text-lg font-bold text-foreground">
-                  {FIGHTER_INFO.reach}
-                </div>
-                <div className="text-xs text-muted-foreground uppercase tracking-wide">
-                  Alcance
-                </div>
-              </div>
-              <div className="text-center">
-                <div className="text-lg font-bold text-foreground">
-                  {FIGHTER_INFO.weight}
-                </div>
-                <div className="text-xs text-muted-foreground uppercase tracking-wide">
-                  Peso
-                </div>
-              </div>
-              <div className="text-center">
-                <div className="text-lg font-bold text-foreground">
-                  {FIGHTER_INFO.stance}
-                </div>
-                <div className="text-xs text-muted-foreground uppercase tracking-wide">
-                  Guardia
-                </div>
+              <h1 className="text-display text-6xl md:text-7xl lg:text-8xl xl:text-9xl leading-none mb-6">
+                <span className="block text-topuria-white font-bold">ILIA</span>
+                <span className="block text-topuria-white font-black">TOPURIA</span>
+              </h1>
+              
+              <div className="flex items-center justify-center gap-4 text-lg md:text-xl">
+                <span className="text-topuria-gold/80 font-bold italic">&ldquo;El Matador&rdquo;</span>
+                <div className="w-1 h-1 bg-topuria-white/40" />
+                <span className="text-topuria-white/60 font-bold">Bicampeón UFC</span>
               </div>
             </motion.div>
 
-            {/* Fight Stats - Más compactas */}
+            {/* Essential Stats - Bold and Centered */}
             <motion.div 
-              variants={fadeInUp}
-              className="grid grid-cols-3 gap-4"
+              variants={statsVariants}
+              className="grid grid-cols-3 gap-8 max-w-2xl mx-auto mb-16"
             >
-              <div className="stat-card text-center p-4">
-                <div className="text-2xl font-black text-topuria-red mb-1">
-                  {winsCount}
-                </div>
-                <div className="text-xs uppercase tracking-wide text-muted-foreground">
-                  Victorias
-                </div>
-              </div>
-              
-              <div className="stat-card text-center p-4">
-                <div className="text-2xl font-black text-topuria-gold mb-1">
-                  {koCount}
-                </div>
-                <div className="text-xs uppercase tracking-wide text-muted-foreground">
-                  KOs
-                </div>
-              </div>
-              
-              <div className="stat-card text-center p-4">
-                <div className="text-2xl font-black text-topuria-red mb-1">
-                  {subCount}
-                </div>
-                <div className="text-xs uppercase tracking-wide text-muted-foreground">
-                  Sumisiones
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Record y Finish Rate */}
-            <motion.div 
-              variants={fadeInUp}
-              className="grid grid-cols-2 gap-4"
-            >
-              <div className="stat-card text-center p-4">
-                <div className="text-2xl font-black text-topuria-gold mb-1">
+              <div className="text-center">
+                <div className="text-3xl md:text-4xl font-black text-topuria-white/95 mb-2">
                   {currentStats.record}
                 </div>
-                <div className="text-xs uppercase tracking-wide text-muted-foreground">
-                  Récord
+                <div className="text-sm uppercase tracking-widest text-topuria-white/50 font-bold">
+                  Invicto
                 </div>
               </div>
               
-              <div className="stat-card text-center p-4">
-                <div className="text-2xl font-black text-topuria-red mb-1">
-                  {finishRateCount}%
-                </div>
-                <div className="text-xs uppercase tracking-wide text-muted-foreground">
-                  Finalizaciones
-                </div>
-              </div>
-            </motion.div>
-
-            {/* CTA Buttons */}
-            <motion.div 
-              variants={fadeInUp}
-              className="flex gap-4"
-            >
-              <button
-                onClick={() => scrollToSection('stats')}
-                className="btn-red px-6 py-3 text-sm font-bold uppercase tracking-wider hover-press shadow-solid-sm"
-              >
-                <Trophy className="w-4 h-4 mr-2 inline" />
-                Estadísticas
-              </button>
-              
-              <button
-                onClick={() => scrollToSection('career')}
-                className="btn-secondary px-6 py-3 text-sm font-bold uppercase tracking-wider hover-press shadow-solid-sm"
-              >
-                Carrera
-              </button>
-            </motion.div>
-
-          </motion.div>
-
-          {/* Right Side - Hero Image & Belt */}
-          <motion.div 
-            variants={slideInRight}
-            className="relative flex items-center justify-center"
-          >
-
-            {/* Main Hero Image - Más compacta */}
-            <motion.div
-              variants={scaleIn}
-              style={mounted ? { y: imageY } : undefined}
-              className="relative w-full max-w-md h-[500px] lg:h-[600px]"
-            >
-              <Image
-                src="/images/topuria-hero.webp"
-                alt="Ilia Topuria - El Matador"
-                fill
-                className="object-contain object-bottom"
-                priority
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-              
-              {/* Image Glow Effect */}
-              <motion.div
-                animate={{
-                  opacity: [0.1, 0.2, 0.1],
-                  scale: [0.95, 1.05, 0.95]
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-                className="absolute inset-0 bg-topuria-red/10 blur-2xl"
-              />
-            </motion.div>
-
-            {/* Floating Stats Cards - Más pequeñas */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 1, duration: 0.5 }}
-              className="absolute bottom-16 left-0 bg-background/90 backdrop-blur-sm border-2 border-border p-3 shadow-solid-sm"
-            >
               <div className="text-center">
-                <div className="text-xl font-black text-topuria-red">
+                <div className="text-3xl md:text-4xl font-black text-topuria-gold/90 mb-2">
                   #{currentStats.ranking}
                 </div>
-                <div className="text-xs uppercase tracking-wide text-muted-foreground">
-                  Ranking P4P
+                <div className="text-sm uppercase tracking-widest text-topuria-white/50 font-bold">
+                  P4P Mundial
                 </div>
               </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 1.2, duration: 0.5 }}
-              className="absolute top-24 left-0 bg-background/90 backdrop-blur-sm border-2 border-border p-3 shadow-solid-sm"
-            >
+              
               <div className="text-center">
-                <div className="text-xl font-black text-topuria-gold">
-                  {currentStats.weightClass}
+                <div className="text-2xl md:text-3xl font-black text-topuria-white/95 mb-2">
+                  {currentStats.titles}
                 </div>
-                <div className="text-xs uppercase tracking-wide text-muted-foreground">
-                  División
+                <div className="text-sm uppercase tracking-widest text-topuria-white/50 font-bold">
+                  Cinturones
                 </div>
               </div>
             </motion.div>
 
-          </motion.div>
+            {/* Centered CTA */}
+            <motion.div 
+              variants={statsVariants}
+              className="text-center"
+            >
+              <button
+                onClick={() => scrollToSection('about')}
+                className="bg-transparent border border-topuria-white/30 text-topuria-white/90 px-8 py-3 font-bold uppercase tracking-widest text-sm hover:bg-topuria-white/10 hover:border-topuria-white/60 transition-all duration-500"
+              >
+                Conoce al Bicampeón
+              </button>
+            </motion.div>
 
+          </div>
         </div>
       </motion.div>
 
-      {/* Scroll Indicator */}
+      {/* Minimal Scroll Indicator */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.5, duration: 0.5 }}
-        className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.4 }}
+        transition={{ delay: 3, duration: 1 }}
+        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30"
       >
         <motion.div
           animate={{ y: [0, 6, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="flex flex-col items-center space-y-1 text-muted-foreground cursor-pointer hover-press"
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          className="flex flex-col items-center space-y-2 text-topuria-white/30 cursor-pointer"
           onClick={() => scrollToSection('about')}
         >
-          <span className="text-xs uppercase tracking-wide font-bold">Deslizar</span>
           <ArrowDown className="w-4 h-4" />
         </motion.div>
       </motion.div>
 
-      {/* Background Particles - Más sutiles */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Subtle Branding Elements */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Minimal corner accents */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.2 }}
-          transition={{ delay: 2 }}
-          className="absolute top-20 left-20 w-3 h-3 bg-topuria-red"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ delay: 2, duration: 1.5, ease: "easeOut" }}
+          className="absolute top-0 left-0 w-20 h-px bg-topuria-white/20 origin-left"
         />
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.2 }}
-          transition={{ delay: 2.3 }}
-          className="absolute top-32 right-32 w-4 h-4 bg-topuria-gold"
+          initial={{ scaleY: 0 }}
+          animate={{ scaleY: 1 }}
+          transition={{ delay: 2.2, duration: 1.5, ease: "easeOut" }}
+          className="absolute top-0 left-0 w-px h-20 bg-topuria-white/20 origin-top"
+        />
+        
+        <motion.div
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ delay: 2.4, duration: 1.5, ease: "easeOut" }}
+          className="absolute bottom-0 right-0 w-20 h-px bg-topuria-gold/30 origin-right"
         />
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.2 }}
-          transition={{ delay: 2.6 }}
-          className="absolute bottom-32 left-32 w-2 h-2 bg-topuria-red"
+          initial={{ scaleY: 0 }}
+          animate={{ scaleY: 1 }}
+          transition={{ delay: 2.6, duration: 1.5, ease: "easeOut" }}
+          className="absolute bottom-0 right-0 w-px h-20 bg-topuria-gold/30 origin-bottom"
         />
       </div>
+
+      {/* Transition to Next Section with Scroll-triggered Champion Image */}
+      <motion.div
+        className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-topuria-white via-topuria-white/80 to-transparent z-30 pointer-events-none"
+        style={{
+          opacity: transitionOpacity
+        }}
+      />
+      
+      {/* Floating Champion Image - Scroll Triggered */}
+      <motion.div
+        className="absolute right-8 bottom-0 z-25 pointer-events-none"
+        style={{
+          y: floatingImageY,
+          opacity: floatingImageOpacity,
+          scale: floatingImageScale
+        }}
+      >
+        <motion.div
+          animate={{
+            y: [0, -10, 0]
+          }}
+          transition={{
+            duration: 4,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          className="relative w-48 h-64 md:w-60 md:h-80"
+        >
+          <img
+            src="/images/topuria-hero.webp"
+            alt="Ilia Topuria con cinturón UFC"
+            className="w-full h-full object-contain filter drop-shadow-lg"
+          />
+          
+          {/* Glow effect behind the image */}
+          <motion.div
+            animate={{
+              opacity: [0.3, 0.6, 0.3],
+              scale: [0.8, 1.2, 0.8]
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+            className="absolute inset-0 bg-topuria-gold/20 blur-xl -z-10"
+          />
+        </motion.div>
+      </motion.div>
 
     </section>
   )
