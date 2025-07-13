@@ -4,16 +4,13 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { Crown, ArrowDown, Play, Pause } from 'lucide-react'
-import { useUFCStatsSimple } from '@/hooks/use-ufc-stats'
+import Image from 'next/image'
 import type { Variants } from 'framer-motion'
 
 export default function HeroSection() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [isPlaying, setIsPlaying] = useState(true)
   const [isVideoLoaded, setIsVideoLoaded] = useState(false)
-  
-  // UFC stats simplificado
-  const baseStats = useUFCStatsSimple()
   
   // Scroll effects
   const { scrollYProgress } = useScroll()
@@ -325,10 +322,12 @@ export default function HeroSection() {
           }}
           className="relative w-48 h-64 md:w-60 md:h-80"
         >
-          <img
+          <Image
             src="/images/topuria-hero.webp"
             alt="Ilia Topuria con cinturón UFC"
-            className="w-full h-full object-contain filter drop-shadow-lg"
+            fill
+            className="object-contain filter drop-shadow-lg"
+            priority
           />
           
           {/* Glow effect behind the image */}
