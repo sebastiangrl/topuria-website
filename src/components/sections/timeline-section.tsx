@@ -554,7 +554,7 @@ export default function TimelineSection() {
               {/* Topuria - Ganador/Perdedor */}
               <FighterCard
                 nombre="Ilia Topuria"
-                imagen="/images/topuria-fight.png"
+                imagen="/images/combates/topuria-fight.png"
                 resultado={peleaSeleccionada.resultado === 'Victoria' ? 'GANADOR' : 'PERDEDOR'}
                 isWinner={peleaSeleccionada.resultado === 'Victoria'}
                 onClick={() => setModalAbierto(true)}
@@ -634,7 +634,7 @@ export default function TimelineSection() {
         isOpen={modalAbierto} 
         onClose={() => setModalAbierto(false)} 
         isTopuria={true}
-        fighterImage="/images/topuria-fight.png"
+        fighterImage="/images/combates/topuria-fight.png"
       />
       
       <FightModal 
