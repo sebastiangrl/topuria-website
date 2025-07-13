@@ -2,16 +2,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion, AnimatePresence, Variants } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Sun, Moon } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { Button } from '@/components/ui/button'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
-import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from '@/components/ui/navigation-menu'
 import { cn } from '@/lib/utils'
 import { NAV_ITEMS } from '@/lib/constants'
 import { useMounted } from '@/hooks/use-mounted'
-import Logo from '@/components/common/logo'
 
 interface HeaderProps {
   className?: string
@@ -24,18 +21,11 @@ export default function Header({ className }: HeaderProps) {
   const mounted = useMounted()
   const { theme, setTheme } = useTheme()
 
-  // Handle hydration
-  useEffect(() => {
-    // No need to call mounted, just use its value
-  }, [])
-
   // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
-      const scrolled = window.scrollY > 20
-      setIsScrolled(scrolled)
+      setIsScrolled(window.scrollY > 10)
     }
-
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
@@ -77,177 +67,110 @@ export default function Header({ className }: HeaderProps) {
     setIsMobileMenuOpen(false)
   }
 
-  const headerVariants: Variants = {
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.3,
-        ease: "easeOut"
-      }
-    },
-    hidden: {
-      y: -100,
-      opacity: 0,
-      transition: {
-        duration: 0.3,
-        ease: "easeIn"
-      }
-    }
-  }
-
-  const navItemVariants: Variants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (i: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: i * 0.1,
-        duration: 0.3,
-        ease: "easeOut"
-      }
-    })
-  }
-
-  const mobileMenuVariants: Variants = {
-    closed: {
-      opacity: 0,
-      y: -20,
-      transition: {
-        duration: 0.2
-      }
-    },
-    open: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.3,
-        staggerChildren: 0.1
-      }
-    }
-  }
-
-  const mobileNavItemVariants: Variants = {
-    closed: { opacity: 0, x: -20 },
-    open: { opacity: 1, x: 0 }
-  }
-
   return (
     <motion.header
-      variants={headerVariants}
-      initial="visible"
-      animate="visible"
+      initial={{ y: 0 }}
+      animate={{ y: 0 }}
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
         isScrolled
-          ? 'bg-background/80 backdrop-blur-md border-b border-border shadow-lg'
+          ? 'bg-background border-b-2 border-border'
           : 'bg-transparent',
         className
       )}
     >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 lg:h-20">
+      <div className="container mx-auto px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20">
+          
           {/* Logo */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className="flex-shrink-0 z-10"
+            className="flex-shrink-0"
           >
-            <Logo />
+            <button 
+              onClick={() => scrollToSection('home')}
+              className="group flex items-center space-x-3 hover-press"
+            >
+              {/* Logo mark */}
+              <div className="relative">
+                <div className="w-12 h-12 bg-topuria-black border-2 border-topuria-black flex items-center justify-center group-hover:bg-topuria-white transition-colors duration-200">
+                  <span className="text-topuria-white group-hover:text-topuria-black font-black text-lg transition-colors duration-200">
+                    IT
+                  </span>
+                </div>
+                {/* Champion indicator */}
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-topuria-red"></div>
+              </div>
+              
+              {/* Logo text */}
+              <div className="hidden sm:block">
+                <div className="text-display text-xl text-foreground leading-none">
+                  ILIA
+                </div>
+                <div className="text-xs font-bold tracking-[0.2em] text-topuria-red uppercase">
+                  TOPURIA
+                </div>
+              </div>
+            </button>
           </motion.div>
 
           {/* Desktop Navigation */}
-          <NavigationMenu className="hidden lg:flex">
-            <NavigationMenuList className="flex items-center space-x-1">
-              {NAV_ITEMS.map((item, index) => (
-                <NavigationMenuItem key={item.id}>
-                  <motion.div
-                    custom={index}
-                    initial="hidden"
-                    animate="visible"
-                    variants={navItemVariants}
-                  >
-                    <Button
-                      variant="ghost"
-                      onClick={() => scrollToSection(item.id)}
-                      className={cn(
-                        'relative px-4 py-2 text-sm font-medium transition-all duration-300',
-                        'hover:text-spanish-red hover:bg-spanish-red/5',
-                        activeSection === item.id
-                          ? 'text-spanish-red'
-                          : 'text-foreground/70'
-                      )}
-                    >
-                      {item.label}
-                      {activeSection === item.id && (
-                        <motion.div
-                          layoutId="activeTab"
-                          className="absolute inset-x-0 bottom-0 h-0.5 bg-spanish-red rounded-full"
-                          initial={false}
-                          transition={{
-                            type: 'spring',
-                            stiffness: 500,
-                            damping: 30
-                          }}
-                        />
-                      )}
-                    </Button>
-                  </motion.div>
-                </NavigationMenuItem>
-              ))}
-            </NavigationMenuList>
-          </NavigationMenu>
+          <nav className="hidden lg:flex items-center space-x-1">
+            {NAV_ITEMS.map((item, index) => (
+              <motion.div
+                key={item.id}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+              >
+                <button
+                  onClick={() => scrollToSection(item.id)}
+                  className={cn(
+                    'relative px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all duration-200',
+                    'hover:text-topuria-red',
+                    activeSection === item.id
+                      ? 'text-topuria-red'
+                      : 'text-foreground'
+                  )}
+                >
+                  {item.label}
+                  {activeSection === item.id && (
+                    <motion.div
+                      layoutId="activeTab"
+                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-topuria-red"
+                      initial={false}
+                      transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+                    />
+                  )}
+                </button>
+              </motion.div>
+            ))}
+          </nav>
 
           {/* Right side actions */}
           <div className="flex items-center space-x-4">
+            
             {/* Theme Toggle */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3, delay: 0.5 }}
-            >
-              {mounted ? (
-                <Button
-                  variant="ghost"
-                  size="icon"
+            {mounted && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3, delay: 0.5 }}
+              >
+                <button
                   onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                  className="relative overflow-hidden"
+                  className="w-10 h-10 border-2 border-gray-300 hover:border-topuria-black flex items-center justify-center transition-all duration-200 hover-press"
                 >
-                  <motion.div
-                    initial={false}
-                    animate={{
-                      rotate: theme === 'dark' ? 180 : 0,
-                      scale: theme === 'dark' ? 0 : 1
-                    }}
-                    transition={{ duration: 0.3 }}
-                    className="absolute inset-0 flex items-center justify-center"
-                  >
+                  {theme === 'dark' ? (
                     <Sun className="h-4 w-4" />
-                  </motion.div>
-                  <motion.div
-                    initial={false}
-                    animate={{
-                      rotate: theme === 'dark' ? 0 : -180,
-                      scale: theme === 'dark' ? 1 : 0
-                    }}
-                    transition={{ duration: 0.3 }}
-                    className="absolute inset-0 flex items-center justify-center"
-                  >
+                  ) : (
                     <Moon className="h-4 w-4" />
-                  </motion.div>
-                </Button>
-              ) : (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  disabled
-                  className="relative overflow-hidden"
-                >
-                  <div className="h-4 w-4 rounded-full bg-muted animate-pulse" />
-                </Button>
-              )}
-            </motion.div>
+                  )}
+                </button>
+              </motion.div>
+            )}
 
             {/* CTA Button */}
             <motion.div
@@ -256,106 +179,99 @@ export default function Header({ className }: HeaderProps) {
               transition={{ duration: 0.5, delay: 0.3 }}
               className="hidden sm:block"
             >
-              <Button
+              <button
                 onClick={() => scrollToSection('contact')}
-                className="bg-spanish-red hover:bg-dark-red text-white px-6 py-2 rounded-full font-medium transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                className="btn-red px-6 py-3 text-sm font-bold uppercase tracking-wider hover-press shadow-solid-sm hover:shadow-solid"
               >
                 Contact
-              </Button>
+              </button>
             </motion.div>
 
-            {/* Mobile Menu Trigger */}
-            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
-              <SheetTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="lg:hidden"
-                >
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={isMobileMenuOpen ? 'close' : 'menu'}
-                      initial={{ rotate: 0, opacity: 0 }}
-                      animate={{ rotate: 0, opacity: 1 }}
-                      exit={{ rotate: 180, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      {isMobileMenuOpen ? (
-                        <X className="h-5 w-5" />
-                      ) : (
-                        <Menu className="h-5 w-5" />
-                      )}
-                    </motion.div>
-                  </AnimatePresence>
-                </Button>
-              </SheetTrigger>
-
-              {/* Mobile Menu Content */}
-              <SheetContent 
-                side="right" 
-                className="w-full sm:w-80 bg-background/95 backdrop-blur-md border-l border-border"
-              >
+            {/* Mobile Menu Toggle */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="lg:hidden w-10 h-10 border-2 border-gray-300 hover:border-topuria-black flex items-center justify-center transition-all duration-200 hover-press"
+            >
+              <AnimatePresence mode="wait">
                 <motion.div
-                  variants={mobileMenuVariants}
-                  initial="closed"
-                  animate="open"
-                  exit="closed"
-                  className="flex flex-col h-full pt-16"
+                  key={isMobileMenuOpen ? 'close' : 'menu'}
+                  initial={{ rotate: 0, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  {/* Mobile Navigation */}
-                  <nav className="flex-1">
-                    <div className="space-y-2">
-                      {NAV_ITEMS.map((item, index) => (
-                        <motion.div
-                          key={item.id}
-                          variants={mobileNavItemVariants}
-                          custom={index}
-                        >
-                          <Button
-                            variant="ghost"
-                            onClick={() => scrollToSection(item.id)}
-                            className={cn(
-                              'w-full justify-start text-lg py-3 px-4 rounded-lg',
-                              'hover:bg-spanish-red/10 hover:text-spanish-red',
-                              activeSection === item.id
-                                ? 'bg-spanish-red/10 text-spanish-red border-l-2 border-spanish-red'
-                                : 'text-foreground/70'
-                            )}
-                          >
-                            {item.label}
-                          </Button>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </nav>
-
-                  {/* Mobile CTA */}
-                  <motion.div
-                    variants={mobileNavItemVariants}
-                    className="pt-6 border-t border-border"
-                  >
-                    <Button
-                      onClick={() => scrollToSection('contact')}
-                      className="w-full bg-spanish-red hover:bg-dark-red text-white py-3 rounded-lg font-medium"
-                    >
-                      Get in Touch
-                    </Button>
-                  </motion.div>
+                  {isMobileMenuOpen ? (
+                    <X className="h-5 w-5" />
+                  ) : (
+                    <Menu className="h-5 w-5" />
+                  )}
                 </motion.div>
-              </SheetContent>
-            </Sheet>
+              </AnimatePresence>
+            </button>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="lg:hidden overflow-hidden border-t-2 border-border bg-background"
+            >
+              <nav className="py-6 space-y-2">
+                {NAV_ITEMS.map((item, index) => (
+                  <motion.div
+                    key={item.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                  >
+                    <button
+                      onClick={() => scrollToSection(item.id)}
+                      className={cn(
+                        'w-full text-left px-6 py-4 text-base font-bold uppercase tracking-wider transition-all duration-200',
+                        'hover:bg-gray-100 hover:text-topuria-red accent-line',
+                        activeSection === item.id
+                          ? 'text-topuria-red bg-gray-50'
+                          : 'text-foreground'
+                      )}
+                    >
+                      {item.label}
+                    </button>
+                  </motion.div>
+                ))}
+                
+                {/* Mobile CTA */}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3, delay: NAV_ITEMS.length * 0.1 }}
+                  className="px-6 pt-4"
+                >
+                  <button
+                    onClick={() => scrollToSection('contact')}
+                    className="w-full btn-red py-4 text-base font-bold uppercase tracking-wider shadow-solid-sm"
+                  >
+                    Contact
+                  </button>
+                </motion.div>
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
-      {/* Progress indicator */}
-      <motion.div
-        className="absolute bottom-0 left-0 h-0.5 bg-spanish-red origin-left"
-        style={{
-          scaleX: isScrolled ? 1 : 0
-        }}
-        transition={{ duration: 0.3 }}
-      />
+      {/* Progress indicator - solo cuando está scrolled */}
+      {isScrolled && (
+        <motion.div
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          className="absolute bottom-0 left-0 h-1 bg-topuria-red origin-left w-full"
+        />
+      )}
     </motion.header>
   )
 }

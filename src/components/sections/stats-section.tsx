@@ -3,535 +3,491 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
-import { TrendingUp, Target, Zap, Shield, Award, BarChart3, Trophy, Clock } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { Trophy, Crown, Star, Shield } from 'lucide-react'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
-import { FIGHT_STATS } from '@/lib/constants'
 import type { Variants } from 'framer-motion'
 
-interface StatCard {
-  title: string
-  value: string | number
-  change?: string
-  trend?: 'up' | 'down' | 'neutral'
-  icon: any
-  description: string
-  color: string
-  bgColor: string
-}
-
-interface FightMetric {
+interface CircularStat {
+  id: string
   label: string
   value: number
-  max: number
+  total: number
+  percentage: number
   color: string
   description: string
 }
 
-const performanceStats: StatCard[] = [
-  {
-    title: 'Win Rate',
-    value: '100%',
-    trend: 'up',
-    icon: Trophy,
-    description: 'Undefeated professional record',
-    color: 'text-emerald-600',
-    bgColor: 'bg-emerald-500/10'
-  },
-  {
-    title: 'Finish Rate',
-    value: '93.7%',
-    change: '+5%',
-    trend: 'up',
-    icon: Zap,
-    description: 'Percentage of fights finished before decision',
-    color: 'text-spanish-red',
-    bgColor: 'bg-spanish-red/10'
-  },
-  {
-    title: 'Avg Fight Time',
-    value: '1.8',
-    change: '-0.5',
-    trend: 'down',
-    icon: Clock,
-    description: 'Average rounds per fight',
-    color: 'text-spanish-gold',
-    bgColor: 'bg-spanish-gold/10'
-  },
-  {
-    title: 'Title Defenses',
-    value: '2',
-    change: '+2',
-    trend: 'up',
-    icon: Shield,
-    description: 'Successful championship defenses',
-    color: 'text-purple-600',
-    bgColor: 'bg-purple-500/10'
-  }
-]
+interface SimpleStat {
+  label: string
+  value: string
+  description: string
+}
 
-const fightingMetrics: FightMetric[] = [
+interface MiniCard {
+  title: string
+  subtitle: string
+  icon: any
+}
+
+const circularStats: CircularStat[] = [
   {
-    label: 'Striking Accuracy',
-    value: 89,
-    max: 100,
-    color: 'bg-spanish-red',
-    description: 'Significant strikes landed percentage'
+    id: 'finish-rate',
+    label: 'Tasa de Finalización',
+    value: 15,
+    total: 17,
+    percentage: 88,
+    color: '#D20A0A',
+    description: '15 de 17 peleas terminadas'
   },
   {
-    label: 'Takedown Defense',
+    id: 'ko-rate',
+    label: 'Ratio de KOs',
+    value: 7,
+    total: 17,
+    percentage: 41,
+    color: '#D20A0A',
+    description: '7 nocauts profesionales'
+  },
+  {
+    id: 'sub-rate',
+    label: 'Ratio de Sumisiones',
+    value: 8,
+    total: 17,
+    percentage: 47,
+    color: '#D20A0A',
+    description: '8 sumisiones totales'
+  },
+  {
+    id: 'first-round',
+    label: 'Primer Asalto',
+    value: 11,
+    total: 17,
+    percentage: 65,
+    color: '#D20A0A',
+    description: '11 finalizaciones R1'
+  },
+  {
+    id: 'precision',
+    label: 'Precisión Golpeo',
+    value: 61,
+    total: 100,
+    percentage: 61,
+    color: '#D20A0A',
+    description: '61% golpes conectados'
+  },
+  {
+    id: 'takedown-defense',
+    label: 'Defensa Takedown',
     value: 95,
-    max: 100,
-    color: 'bg-spanish-gold',
-    description: 'Percentage of takedowns defended'
-  },
-  {
-    label: 'Submission Rate',
-    value: 50,
-    max: 100,
-    color: 'bg-purple-500',
-    description: 'Wins by submission percentage'
-  },
-  {
-    label: 'KO/TKO Rate',
-    value: 44,
-    max: 100,
-    color: 'bg-red-500',
-    description: 'Wins by knockout percentage'
+    total: 100,
+    percentage: 95,
+    color: '#D20A0A',
+    description: '95% derribos defendidos'
   }
 ]
 
-const recordBreakdown = [
-  { category: 'Total Wins', value: FIGHT_STATS.record.wins, color: 'text-emerald-600' },
-  { category: 'Knockouts', value: FIGHT_STATS.finishRate.ko, color: 'text-red-500' },
-  { category: 'Submissions', value: FIGHT_STATS.finishRate.submissions, color: 'text-purple-500' },
-  { category: 'Decisions', value: FIGHT_STATS.finishRate.decisions, color: 'text-blue-500' }
+const rightStats: SimpleStat[] = [
+  {
+    label: 'Golpes Sig. Recibidos',
+    value: '3.83',
+    description: 'POR MINUTO'
+  },
+  {
+    label: 'Golpes Conectados',
+    value: '4.69',
+    description: 'POR MINUTO'
+  },
+  {
+    label: 'Tiempo Promedio',
+    value: '1.8',
+    description: 'ASALTOS POR PELEA'
+  },
+  {
+    label: 'Bonos UFC',
+    value: '5',
+    description: 'PERFORMANCE/FIGHT'
+  },
+  {
+    label: 'Títulos UFC',
+    value: '2',
+    description: 'DIVISIONES'
+  },
+  {
+    label: 'Victorias UFC',
+    value: '8',
+    description: 'EN OCTÁGONO'
+  },
+  {
+    label: 'Finalizaciones R1',
+    value: '11',
+    description: 'PRIMER ASALTO'
+  },
+  {
+    label: 'Invicto',
+    value: '17',
+    description: 'PELEAS GANADAS'
+  }
 ]
 
-const championshipStats = [
-  { division: 'Lightweight', status: 'Current Champion', defenses: 0, color: 'border-spanish-red' },
-  { division: 'Featherweight', status: 'Former Champion', defenses: 1, color: 'border-spanish-gold' }
+const leftMiniCards: MiniCard[] = [
+  {
+    title: 'Bicampeón UFC',
+    subtitle: 'Peso Ligero & Pluma',
+    icon: Crown
+  }
 ]
 
-export default function StatsSection() {
-  const [activeMetric, setActiveMetric] = useState<string | null>(null)
-  const [animatedValues, setAnimatedValues] = useState<{[key: string]: number}>({})
-  const sectionRef = useRef<HTMLDivElement>(null)
-  const isInView = useInView(sectionRef, { once: true, margin: "-100px" })
+const rightMiniCards: MiniCard[] = [
+  {
+    title: 'Pionero Español',
+    subtitle: 'Primer Campeón UFC',
+    icon: Trophy
+  }
+]
 
-  // Animate counters when section comes into view
+const CircularProgress = ({ stat, delay = 0 }: { stat: CircularStat; delay?: number }) => {
+  const [currentPercentage, setCurrentPercentage] = useState(0)
+  const elementRef = useRef<HTMLDivElement>(null)
+  const isInView = useInView(elementRef, { once: true, amount: 0.3 })
+  
+  const radius = 35
+  const circumference = 2 * Math.PI * radius
+  const strokeDashoffset = circumference - (currentPercentage / 100) * circumference
+
   useEffect(() => {
     if (isInView) {
-      const animateValue = (key: string, start: number, end: number, duration: number) => {
-        const startTime = performance.now()
-        const animate = (currentTime: number) => {
-          const elapsed = currentTime - startTime
+      const timer = setTimeout(() => {
+        let start = 0
+        const end = stat.percentage
+        const duration = 2000
+        const startTime = Date.now()
+        
+        const animate = () => {
+          const elapsed = Date.now() - startTime
           const progress = Math.min(elapsed / duration, 1)
+          const easeOutQuart = 1 - Math.pow(1 - progress, 4)
           
-          const easeOutCubic = 1 - Math.pow(1 - progress, 3)
-          const current = start + (end - start) * easeOutCubic
-          
-          setAnimatedValues(prev => ({ ...prev, [key]: Math.floor(current) }))
+          setCurrentPercentage(start + (end - start) * easeOutQuart)
           
           if (progress < 1) {
             requestAnimationFrame(animate)
+          } else {
+            setCurrentPercentage(end)
           }
         }
+        
         requestAnimationFrame(animate)
-      }
-
-      // Animate metrics
-      fightingMetrics.forEach((metric, index) => {
-        setTimeout(() => {
-          animateValue(metric.label, 0, metric.value, 2000)
-        }, index * 200)
-      })
-
-      // Animate record breakdown
-      recordBreakdown.forEach((record, index) => {
-        setTimeout(() => {
-          animateValue(record.category, 0, record.value, 1500)
-        }, index * 150)
-      })
+      }, delay)
+      
+      return () => clearTimeout(timer)
     }
-  }, [isInView])
+  }, [isInView, stat.percentage, delay])
 
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.8,
-        staggerChildren: 0.1
-      }
-    }
-  }
+  return (
+    <div ref={elementRef} className="text-center group cursor-pointer">
+      <motion.div 
+        className="relative w-20 h-20 mx-auto mb-2"
+        whileHover={{ scale: 1.05 }}
+        transition={{ duration: 0.2 }}
+      >
+        <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 80 80">
+          <circle
+            cx="40"
+            cy="40"
+            r={radius}
+            stroke="#f3f4f6"
+            strokeWidth="8"
+            fill="none"
+          />
+          <motion.circle
+            cx="40"
+            cy="40"
+            r={radius}
+            stroke={stat.color}
+            strokeWidth="8"
+            fill="none"
+            strokeDasharray={circumference}
+            strokeDashoffset={strokeDashoffset}
+            transition={{ duration: 0.1, ease: "easeOut" }}
+          />
+        </svg>
+        
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <div className="text-lg font-black text-topuria-black">
+            {Math.round(currentPercentage)}%
+          </div>
+        </div>
+      </motion.div>
+      
+      <motion.div
+        whileHover={{ y: -1 }}
+        transition={{ duration: 0.2 }}
+      >
+        <h4 className="font-bold text-topuria-black text-sm mb-1 group-hover:text-topuria-red transition-colors duration-200">
+          {stat.label}
+        </h4>
+        <p className="text-xs text-gray-600 leading-tight">
+          {stat.description}
+        </p>
+      </motion.div>
+    </div>
+  )
+}
 
-  const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: "easeOut"
-      }
-    }
-  }
+const StatCard = ({ stat, index }: { stat: SimpleStat; index: number }) => {
+  const [currentValue, setCurrentValue] = useState('0')
+  const elementRef = useRef<HTMLDivElement>(null)
+  const isInView = useInView(elementRef, { once: true, amount: 0.3 })
 
-  const cardVariants: Variants = {
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.5,
-        ease: "backOut"
-      }
+  useEffect(() => {
+    if (isInView) {
+      const timer = setTimeout(() => {
+        if (!isNaN(Number(stat.value))) {
+          let start = 0
+          const end = Number(stat.value)
+          const duration = 1500
+          const startTime = Date.now()
+          
+          const animate = () => {
+            const elapsed = Date.now() - startTime
+            const progress = Math.min(elapsed / duration, 1)
+            const current = Math.floor(start + (end - start) * progress)
+            
+            setCurrentValue(current.toString())
+            
+            if (progress < 1) {
+              requestAnimationFrame(animate)
+            } else {
+              setCurrentValue(stat.value)
+            }
+          }
+          
+          requestAnimationFrame(animate)
+        } else {
+          setCurrentValue(stat.value)
+        }
+      }, index * 100)
+      
+      return () => clearTimeout(timer)
     }
-  }
+  }, [isInView, stat.value, index])
+
+  return (
+    <motion.div
+      ref={elementRef}
+      initial={{ opacity: 0, y: 20 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+      transition={{ delay: index * 0.1, duration: 0.5 }}
+      whileHover={{ y: -2, scale: 1.02 }}
+      className="text-center p-3 bg-gray-50 border-l-4 border-topuria-red hover:bg-gray-100 transition-all duration-300 cursor-pointer group"
+    >
+      <div className="text-2xl font-black text-topuria-black mb-1 group-hover:text-topuria-red transition-colors duration-200">
+        {currentValue}
+      </div>
+      <div className="text-xs text-gray-500 uppercase tracking-wide mb-1 font-bold">
+        {stat.description}
+      </div>
+      <div className="text-xs font-bold text-topuria-black group-hover:text-topuria-red transition-colors duration-200">
+        {stat.label}
+      </div>
+    </motion.div>
+  )
+}
+
+const MiniCardComponent = ({ card, delay = 0 }: { card: MiniCard; delay?: number }) => {
+  const cardRef = useRef<HTMLDivElement>(null)
+  const isInView = useInView(cardRef, { once: true })
+  
+  return (
+    <motion.div
+      ref={cardRef}
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
+      transition={{ delay: 1.0 + delay, duration: 0.6 }}
+      className="bg-topuria-white border-2 border-gray-200 p-3 shadow-sm hover:border-topuria-red transition-all duration-300 text-center hover:shadow-lg"
+    >
+      <div className="w-8 h-8 mx-auto mb-2 flex items-center justify-center text-topuria-red">
+        <card.icon className="w-5 h-5" />
+      </div>
+      <div className="text-sm font-bold text-topuria-black">{card.title}</div>
+      <div className="text-xs text-gray-600">{card.subtitle}</div>
+    </motion.div>
+  )
+}
+
+export default function StatsSection() {
+  const sectionRef = useRef<HTMLDivElement>(null)
+  const isInView = useInView(sectionRef, { once: true, margin: "-100px" })
 
   return (
     <section
       ref={sectionRef}
       id="stats"
-      className="py-20 bg-background relative overflow-hidden"
+      className="h-screen bg-topuria-white relative overflow-hidden flex items-center"
     >
-      {/* Background Elements */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-20 left-20 w-32 h-32 bg-spanish-red rounded-full blur-3xl" />
-        <div className="absolute bottom-20 right-20 w-40 h-40 bg-spanish-gold rounded-full blur-3xl" />
+      {/* Background "MATADOR" text */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+        <motion.h1 
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={isInView ? { opacity: 0.04, scale: 1 } : { opacity: 0, scale: 0.8 }}
+          transition={{ duration: 1, delay: 0.5 }}
+          className="text-[10rem] md:text-[12rem] lg:text-[14rem] xl:text-[16rem] font-black text-topuria-black leading-none"
+          style={{ letterSpacing: '0.15em' }}
+        >
+          MATADOR
+        </motion.h1>
       </div>
 
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate={isInView ? "visible" : "hidden"}
-        className="container mx-auto px-4 relative z-10"
-      >
-        {/* Section Header */}
-        <motion.div variants={itemVariants} className="text-center mb-16">
-          <Badge variant="outline" className="mb-4 px-4 py-2 text-spanish-red border-spanish-red/30">
-            <BarChart3 className="w-4 h-4 mr-2" />
-            Performance Analytics
-          </Badge>
+      <div className="container mx-auto px-4 lg:px-6 relative z-20 h-full">
+        <div className="grid lg:grid-cols-3 gap-6 items-center h-full">
           
-          <h2 className="text-4xl md:text-6xl font-black text-foreground mb-6">
-            Championship
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-spanish-red to-spanish-gold">
-              Statistics
-            </span>
-          </h2>
-          
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Numbers that define dominance. Every statistic tells the story of precision, 
-            power, and the relentless pursuit of perfection inside the octagon.
-          </p>
-        </motion.div>
-
-        {/* Performance Overview Cards */}
-        <motion.div 
-          variants={itemVariants}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16"
-        >
-          {performanceStats.map((stat, index) => (
-            <motion.div
-              key={stat.title}
-              variants={cardVariants}
-              whileHover={{ y: -4, scale: 1.02 }}
-              className="group"
-            >
-              <Card className="p-6 bg-background/80 backdrop-blur-sm border-border/50 hover:border-spanish-red/30 transition-all duration-300">
-                <CardContent className="p-0">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className={cn('p-3 rounded-lg', stat.bgColor)}>
-                      <stat.icon className={cn('w-6 h-6', stat.color)} />
-                    </div>
-                    {stat.trend && (
-                      <TrendingUp className={cn(
-                        'w-4 h-4',
-                        stat.trend === 'up' ? 'text-emerald-500' : 'text-red-500'
-                      )} />
-                    )}
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <div className="flex items-baseline space-x-2">
-                      <span className="text-3xl font-black text-foreground">
-                        {stat.value}
-                      </span>
-                      {stat.change && (
-                        <span className={cn(
-                          'text-sm font-medium',
-                          stat.trend === 'up' ? 'text-emerald-500' : 'text-red-500'
-                        )}>
-                          {stat.change}
-                        </span>
-                      )}
-                    </div>
-                    
-                    <h3 className="font-semibold text-foreground group-hover:text-spanish-red transition-colors">
-                      {stat.title}
-                    </h3>
-                    
-                    <p className="text-sm text-muted-foreground">
-                      {stat.description}
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Fighting Metrics */}
-        <motion.div variants={itemVariants} className="mb-16">
-          <h3 className="text-2xl font-bold text-foreground mb-8 text-center">
-            Fighting Metrics
-          </h3>
-          
-          <div className="grid md:grid-cols-2 gap-8">
-            {fightingMetrics.map((metric, index) => (
-              <motion.div
-                key={metric.label}
-                variants={cardVariants}
-                onHoverStart={() => setActiveMetric(metric.label)}
-                onHoverEnd={() => setActiveMetric(null)}
-                className="group"
-              >
-                <Card className="p-6 bg-background/80 backdrop-blur-sm border-border/50 hover:border-spanish-red/30 transition-all duration-300">
-                  <CardContent className="p-0">
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="font-semibold text-foreground group-hover:text-spanish-red transition-colors">
-                        {metric.label}
-                      </h4>
-                      <span className="text-2xl font-black text-spanish-red">
-                        {animatedValues[metric.label] || 0}%
-                      </span>
-                    </div>
-                    
-                    <div className="mb-3">
-                      <div className="flex items-center justify-between text-sm text-muted-foreground mb-1">
-                        <span>Progress</span>
-                        <span>{animatedValues[metric.label] || 0}/{metric.max}</span>
-                      </div>
-                      
-                      <div className="w-full bg-muted rounded-full h-3 overflow-hidden">
-                        <motion.div
-                          className={cn(metric.color, 'h-full rounded-full')}
-                          initial={{ width: 0 }}
-                          animate={{ 
-                            width: isInView ? `${(animatedValues[metric.label] || 0)}%` : 0 
-                          }}
-                          transition={{ 
-                            duration: 2, 
-                            delay: index * 0.2,
-                            ease: "easeOut"
-                          }}
-                        />
-                      </div>
-                    </div>
-                    
-                    <p className="text-sm text-muted-foreground">
-                      {metric.description}
-                    </p>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Record Breakdown and Championships */}
-        <div className="grid lg:grid-cols-2 gap-12">
-          
-          {/* Record Breakdown */}
-          <motion.div variants={itemVariants}>
-            <Card className="p-8 bg-background/80 backdrop-blur-sm border-spanish-red/20">
-              <CardHeader className="p-0 mb-6">
-                <CardTitle className="flex items-center">
-                  <Award className="w-6 h-6 mr-2 text-spanish-red" />
-                  Fight Record Breakdown
-                </CardTitle>
-              </CardHeader>
-              
-              <CardContent className="p-0">
-                <div className="space-y-6">
-                  {recordBreakdown.map((record, index) => (
-                    <motion.div
-                      key={record.category}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={isInView ? { opacity: 1, x: 0 } : {}}
-                      transition={{ delay: index * 0.1, duration: 0.5 }}
-                      className="flex items-center justify-between"
-                    >
-                      <span className="font-medium text-foreground">
-                        {record.category}
-                      </span>
-                      
-                      <div className="flex items-center space-x-3">
-                        <div className="text-right">
-                          <span className={cn('text-2xl font-black', record.color)}>
-                            {animatedValues[record.category] || 0}
-                          </span>
-                        </div>
-                        
-                        <div className="w-16 bg-muted rounded-full h-2">
-                          <motion.div
-                            className={cn('h-full rounded-full', record.color.replace('text-', 'bg-'))}
-                            initial={{ width: 0 }}
-                            animate={{ 
-                              width: isInView ? `${(animatedValues[record.category] || 0) * 6.25}%` : 0 
-                            }}
-                            transition={{ 
-                              duration: 1.5, 
-                              delay: index * 0.1,
-                              ease: "easeOut"
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-                
-                <div className="mt-8 p-4 bg-spanish-red/5 rounded-lg border border-spanish-red/20">
-                  <div className="text-center">
-                    <div className="text-4xl font-black text-spanish-red mb-1">
-                      {FIGHT_STATS.record.wins}-{FIGHT_STATS.record.losses}-{FIGHT_STATS.record.draws}
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Professional MMA Record
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          {/* Left Panel */}
+          <motion.div 
+            initial={{ opacity: 0, x: -50 }}
+            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="space-y-4"
+          >
+            {/* Mini card arriba - más visible */}
+            <div className="mb-6">
+              {leftMiniCards.map((card, index) => (
+                <MiniCardComponent key={index} card={card} delay={0} />
+              ))}
+            </div>
+            
+            <div className="text-left">
+              <h3 className="text-lg font-bold text-topuria-black mb-1">
+                Efectividad de Combate
+              </h3>
+              <p className="text-xs text-gray-600">
+                Análisis de rendimiento
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3">
+              {circularStats.map((stat, index) => (
+                <CircularProgress 
+                  key={stat.id} 
+                  stat={stat} 
+                  delay={index * 150}
+                />
+              ))}
+            </div>
           </motion.div>
 
-          {/* Championship History */}
-          <motion.div variants={itemVariants}>
-            <Card className="p-8 bg-background/80 backdrop-blur-sm border-spanish-gold/20">
-              <CardHeader className="p-0 mb-6">
-                <CardTitle className="flex items-center">
-                  <Trophy className="w-6 h-6 mr-2 text-spanish-gold" />
-                  Championship History
-                </CardTitle>
-              </CardHeader>
+          {/* Center Panel - Fighter */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
+            transition={{ duration: 1, delay: 0.3 }}
+            className="relative flex flex-col items-center justify-center h-full"
+          >
+            {/* Champion Badge - DETRÁS de la imagen */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+              transition={{ delay: 0.5, duration: 0.6 }}
+              className="absolute top-12 left-1/2 transform -translate-x-1/2 bg-topuria-red text-topuria-white px-6 py-2 font-bold uppercase tracking-wider text-sm z-10"
+            >
+              Campeón Activo
+            </motion.div>
+
+            {/* ILIA arriba en negro - MÁS GRANDE con spacing y CENTRADO */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+              transition={{ delay: 0.6, duration: 0.6 }}
+              className="absolute top-20 left-1/2 transform -translate-x-1/2 z-10 text-center"
+            >
+              <h2 className="text-6xl md:text-7xl lg:text-8xl font-black text-topuria-black leading-none tracking-[0.3em]">
+                ILIA
+              </h2>
+            </motion.div>
+
+            {/* TOPURIA debajo en rojo */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+              transition={{ delay: 0.7, duration: 0.6 }}
+              className="absolute top-40 left-1/2 transform -translate-x-1/2 z-10"
+            >
+              <h1 className="text-5xl md:text-6xl font-black text-topuria-red leading-none tracking-[0.1em]">
+                TOPURIA
+              </h1>
+            </motion.div>
+
+            {/* Fighter Image */}
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.3 }}
+              className="relative h-full w-full max-w-[370px] mx-auto cursor-pointer mt-8 z-20"
+            >
+              <Image
+                src="/images/ilia-hero.webp"
+                alt="Ilia Topuria - El Matador"
+                fill
+                className="object-contain object-bottom"
+                priority
+              />
               
-              <CardContent className="p-0">
-                <div className="space-y-6">
-                  {championshipStats.map((division, index) => (
-                    <motion.div
-                      key={division.division}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={isInView ? { opacity: 1, y: 0 } : {}}
-                      transition={{ delay: index * 0.2, duration: 0.5 }}
-                      className={cn(
-                        'p-6 rounded-lg border-2 bg-muted/20',
-                        division.color
-                      )}
-                    >
-                      <div className="flex items-center justify-between mb-3">
-                        <h4 className="text-lg font-bold text-foreground">
-                          {division.division}
-                        </h4>
-                        <Badge 
-                          variant={division.status === 'Current Champion' ? 'default' : 'outline'}
-                          className={division.status === 'Current Champion' ? 'bg-spanish-red text-white' : ''}
-                        >
-                          {division.status}
-                        </Badge>
-                      </div>
-                      
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                          <span className="text-muted-foreground">Title Defenses:</span>
-                          <div className="text-xl font-black text-foreground">
-                            {division.defenses}
-                          </div>
-                        </div>
-                        <div>
-                          <span className="text-muted-foreground">Status:</span>
-                          <div className="font-semibold text-foreground">
-                            {division.status === 'Current Champion' ? 'Active' : 'Vacated'}
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-                
-                <div className="mt-8 text-center">
-                  <div className="inline-flex items-center space-x-2 px-4 py-2 bg-spanish-gold/10 rounded-full border border-spanish-gold/30">
-                    <Trophy className="w-5 h-5 text-spanish-gold" />
-                    <span className="font-semibold text-spanish-gold">
-                      Two-Division Champion
-                    </span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+              {/* Subtle hover glow */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                whileHover={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+                className="absolute inset-0 bg-gradient-to-t from-topuria-red/5 to-transparent pointer-events-none"
+              />
+            </motion.div>
+
+            {/* Record at bottom - SOBRE la imagen */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ delay: 1, duration: 0.6 }}
+              className="absolute bottom-16 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-topuria-red via-topuria-black to-topuria-red text-topuria-white font-black text-3xl px-8 py-3 z-50"
+            >
+              <div className="flex items-center gap-4">
+                <span>17</span>
+                <span>-</span>
+                <span>0</span>
+                <span>-</span>
+                <span>0</span>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Right Panel */}
+          <motion.div 
+            initial={{ opacity: 0, x: 50 }}
+            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="space-y-4"
+          >
+            {/* Mini card arriba - más visible */}
+            <div className="mb-6">
+              {rightMiniCards.map((card, index) => (
+                <MiniCardComponent key={index} card={card} delay={0.2} />
+              ))}
+            </div>
+            
+            <div className="text-left">
+              <h3 className="text-lg font-bold text-topuria-black mb-1">
+                Estadísticas Técnicas
+              </h3>
+              <p className="text-xs text-gray-600">
+                Datos de rendimiento UFC
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-2">
+              {rightStats.map((stat, index) => (
+                <StatCard key={stat.label} stat={stat} index={index} />
+              ))}
+            </div>
           </motion.div>
         </div>
-
-        {/* UFC Comparison */}
-        <motion.div variants={itemVariants} className="mt-16">
-          <Card className="p-8 bg-gradient-to-br from-spanish-red/5 to-spanish-gold/5 border-spanish-red/20">
-            <CardContent className="p-0">
-              <div className="text-center mb-8">
-                <h3 className="text-2xl font-bold text-foreground mb-2">
-                  UFC Elite Status
-                </h3>
-                <p className="text-muted-foreground">
-                  Among the most dominant champions in UFC history
-                </p>
-              </div>
-              
-              <div className="grid md:grid-cols-3 gap-8">
-                <div className="text-center">
-                  <div className="text-4xl font-black text-spanish-red mb-2">
-                    #1
-                  </div>
-                  <div className="font-semibold text-foreground mb-1">
-                    P4P Ranking
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    Pound-for-pound best fighter
-                  </div>
-                </div>
-                
-                <div className="text-center">
-                  <div className="text-4xl font-black text-spanish-gold mb-2">
-                    10th
-                  </div>
-                  <div className="font-semibold text-foreground mb-1">
-                    Two-Division Champion
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    In UFC history
-                  </div>
-                </div>
-                
-                <div className="text-center">
-                  <div className="text-4xl font-black text-purple-500 mb-2">
-                    1st
-                  </div>
-                  <div className="font-semibold text-foreground mb-1">
-                    Spanish UFC Champion
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    Historic achievement
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-      </motion.div>
+      </div>
     </section>
   )
 }

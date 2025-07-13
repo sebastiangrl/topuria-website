@@ -1,505 +1,557 @@
 // src/components/sections/about-section.tsx
 'use client'
 
-import { useState, useRef } from 'react'
-import { motion, useInView } from 'framer-motion'
-import { MapPin, Heart, Trophy, Star, Flag, Calendar, Users } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { useState, useRef, useEffect } from 'react'
+import { motion, useScroll, useTransform, useInView } from 'framer-motion'
+import { MapPin, Trophy, Star, Flag, Zap, Medal, Heart, Crown, Calendar, ChevronLeft, ChevronRight } from 'lucide-react'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import type { Variants } from 'framer-motion'
 
 interface TimelineEvent {
   id: string
+  date: string
   year: string
   title: string
+  subtitle: string
   description: string
+  details: string[]
   location: string
+  category: 'origen' | 'formacion' | 'profesional' | 'ufc' | 'campeon'
   icon: any
-  category: 'life' | 'career' | 'achievement'
-  image?: string
-  details?: string[]
+  backgroundImage: string
+  color: string
 }
 
 const timelineEvents: TimelineEvent[] = [
   {
     id: '1997',
+    date: '21 de enero, 1997',
     year: '1997',
-    title: 'Born in Germany',
-    description: 'Ilia Topuria born in Halle, Germany to Georgian parents',
-    location: 'Halle, Germany',
+    title: 'Nace el Futuro Campeón',
+    subtitle: 'Halle, Alemania',
+    description: 'Un niño georgiano ve la luz en tierra alemana',
+    details: [
+      'Padres georgianos refugiados de Abjasia',
+      'Primeros años en ambiente multicultural',
+      'Las raíces de tres naciones se plantan'
+    ],
+    location: 'Halle, Alemania',
+    category: 'origen',
     icon: MapPin,
-    category: 'life',
-    details: [
-      'Born January 21st to Georgian immigrant parents',
-      'First exposure to European culture and values',
-      'Early childhood in multicultural environment'
-    ]
+    backgroundImage: '/images/timeline/germany-bg.jpg',
+    color: 'from-blue-900 to-gray-800'
   },
   {
-    id: '2008',
-    year: '2008',
-    title: 'Move to Spain',
-    description: 'Family relocates to Spain, where Ilia would grow up',
-    location: 'Alicante, Spain',
+    id: '2004',
+    date: '2004',
+    year: '2004',
+    title: 'El Despertar del Guerrero',
+    subtitle: 'Georgia, Tierra de Luchadores',
+    description: 'Descubre la lucha grecorromana en su patria ancestral',
+    details: [
+      'Traslado a Georgia a los 7 años',
+      'Inicio en lucha grecorromana escolar',
+      'Su padre reconoce el talento natural',
+      'Primeras bases del combate'
+    ],
+    location: 'Georgia',
+    category: 'formacion',
+    icon: Star,
+    backgroundImage: '/images/timeline/georgia-bg.jpg',
+    color: 'from-red-900 to-orange-800'
+  },
+  {
+    id: '2012',
+    date: '2012',
+    year: '2012',
+    title: 'España, El Hogar Definitivo',
+    subtitle: 'Alicante - Donde Nace El Matador',
+    description: 'La familia encuentra su hogar en tierras valencianas',
+    details: [
+      'Llegada a Alicante tras guerra ruso-georgiana',
+      'Descubrimiento de las MMA en Climent Club',
+      'Jorge y Agustín Climent como mentores',
+      'Fusión de culturas y estilos de lucha'
+    ],
+    location: 'Alicante, España',
+    category: 'formacion',
     icon: Flag,
-    category: 'life',
-    details: [
-      'Family moved to Alicante seeking better opportunities',
-      'Learned Spanish and embraced Spanish culture',
-      'Developed deep connection to Spain'
-    ]
-  },
-  {
-    id: '2001',
-    year: '2001',
-    title: 'First Steps in Combat',
-    description: 'Started training in Brazilian Jiu-Jitsu at age 4',
-    location: 'Spain',
-    icon: Users,
-    category: 'career',
-    details: [
-      'Father introduced him to martial arts',
-      'Began with Brazilian Jiu-Jitsu fundamentals',
-      'Showed natural talent and dedication'
-    ]
+    backgroundImage: '/images/timeline/spain-bg.jpg',
+    color: 'from-red-700 to-yellow-600'
   },
   {
     id: '2015',
+    date: 'Mayo 2015',
     year: '2015',
-    title: 'Professional Debut',
-    description: 'First professional MMA fight in Venezuela',
-    location: 'Venezuela',
-    icon: Star,
-    category: 'career',
+    title: 'El Sueño Comienza',
+    subtitle: 'Debut Profesional',
+    description: 'De cajero de Stradivarius a luchador profesional',
     details: [
-      'Won by submission in first round',
-      'Against Francisco Javier Asprilla',
-      'Marked beginning of professional career'
-    ]
+      'Debut profesional a los 18 años',
+      'Victoria por sumisión en primer asalto',
+      'Trabajaba como cajero mientras entrenaba',
+      'El sueño UFC se convierte en obsesión'
+    ],
+    location: 'España',
+    category: 'profesional',
+    icon: Zap,
+    backgroundImage: '/images/timeline/debut-bg.jpg',
+    color: 'from-green-800 to-emerald-700'
+  },
+  {
+    id: '2018',
+    date: 'Junio 2018',
+    year: '2018',
+    title: 'Campeón de Europa',
+    subtitle: 'Cage Warriors',
+    description: 'El primer cinturón que cambió todo',
+    details: [
+      'Título peso gallo Cage Warriors en Bélgica',
+      'Victoria en menos de 2 minutos',
+      'UFC toma nota del fenómeno español',
+      'El ascenso meteórico comienza'
+    ],
+    location: 'Amberes, Bélgica',
+    category: 'profesional',
+    icon: Medal,
+    backgroundImage: '/images/timeline/cage-warriors-bg.jpg',
+    color: 'from-yellow-600 to-amber-700'
   },
   {
     id: '2020',
+    date: '10 de octubre, 2020',
     year: '2020',
-    title: 'UFC Debut',
-    description: 'Signed with UFC and made successful debut',
-    location: 'Abu Dhabi, UAE',
-    icon: Trophy,
-    category: 'achievement',
+    title: 'Bienvenido a UFC',
+    subtitle: 'El Sueño Se Hace Realidad',
+    description: 'Debut victorioso en la jaula más prestigiosa del mundo',
     details: [
-      'Defeated Youssef Zalal by unanimous decision',
-      'Fought during COVID-19 pandemic',
-      'Proved he belonged on biggest stage'
-    ]
+      'Enfrentamiento vs Youssef Zalal',
+      'Victoria por decisión unánime',
+      'Debut durante pandemia en Abu Dhabi',
+      'Primer español en brillar en UFC'
+    ],
+    location: 'Abu Dhabi, UAE',
+    category: 'ufc',
+    icon: Trophy,
+    backgroundImage: '/images/timeline/ufc-debut-bg.jpg',
+    color: 'from-orange-700 to-red-600'
   },
   {
-    id: '2024',
-    year: '2024',
-    title: 'Featherweight Champion',
-    description: 'Defeated Alexander Volkanovski to become champion',
-    location: 'Anaheim, California',
-    icon: Trophy,
-    category: 'achievement',
+    id: '2022',
+    date: '10 de diciembre, 2022',
+    year: '2022',
+    title: 'Rompiendo Invictos',
+    subtitle: 'Bryce Mitchell Cae',
+    description: 'La sumisión que anunció a un contendiente',
     details: [
-      'Knocked out Volkanovski in round 2',
-      'Became first Spanish UFC champion',
-      'Achieved childhood dream'
-    ]
+      'Triángulo de brazo en segundo asalto',
+      'Primera derrota de Mitchell',
+      'Performance of the Night',
+      'Camino al título se acelera'
+    ],
+    location: 'Las Vegas, Nevada',
+    category: 'ufc',
+    icon: Zap,
+    backgroundImage: '/images/timeline/mitchell-bg.jpg',
+    color: 'from-purple-800 to-indigo-700'
+  },
+  {
+    id: '2024-feb',
+    date: '17 de febrero, 2024',
+    year: '2024',
+    title: 'Corona Española',
+    subtitle: 'Primer Campeón UFC de España',
+    description: 'Volkanovski cae ante El Matador',
+    details: [
+      'KO devastador en segundo asalto',
+      'Cumple promesa de noquear al australiano',
+      'Primer español campeón UFC',
+      'España celebra a su nuevo héroe'
+    ],
+    location: 'Anaheim, California',
+    category: 'campeon',
+    icon: Crown,
+    backgroundImage: '/images/timeline/volkanovski-bg.jpg',
+    color: 'from-red-600 to-pink-700'
+  },
+  {
+    id: '2024-oct',
+    date: '26 de octubre, 2024',
+    year: '2024',
+    title: 'Leyenda vs Leyenda',
+    subtitle: 'El Primer KO de Holloway',
+    description: 'Haciendo historia ante un grande',
+    details: [
+      'Noquea a Max Holloway en tercer asalto',
+      'Primer KO en carrera de Holloway',
+      'Defensa exitosa del título',
+      'Silencia a todos los críticos'
+    ],
+    location: 'Abu Dhabi, UAE',
+    category: 'campeon',
+    icon: Trophy,
+    backgroundImage: '/images/timeline/holloway-bg.jpg',
+    color: 'from-yellow-600 to-orange-600'
   },
   {
     id: '2025',
+    date: '28 de junio, 2025',
     year: '2025',
-    title: 'Lightweight Champion',
-    description: 'Moved up and conquered second division',
-    location: 'Las Vegas, Nevada',
-    icon: Trophy,
-    category: 'achievement',
+    title: 'El Matador Supremo',
+    subtitle: 'Bicampeón UFC',
+    description: 'Conquista segunda división y hace historia',
     details: [
-      'Defeated Charles Oliveira for lightweight title',
-      'Became two-division champion',
-      'Reached #1 P4P ranking'
-    ]
+      'KO a Charles Oliveira en primer asalto',
+      'Campeón de dos divisiones',
+      'Ranking #1 libra por libra',
+      'Legado histórico consolidado'
+    ],
+    location: 'Las Vegas, Nevada',
+    category: 'campeon',
+    icon: Crown,
+    backgroundImage: '/images/timeline/oliveira-bg.jpg',
+    color: 'from-red-600 via-yellow-500 to-red-600'
   }
 ]
 
-const personalStats = [
-  {
-    label: 'Countries',
-    value: '3',
-    description: 'Germany, Georgia, Spain',
-    icon: MapPin,
-    color: 'text-blue-500'
-  },
-  {
-    label: 'Languages',
-    value: '4',
-    description: 'Spanish, Georgian, German, English',
-    icon: Users,
-    color: 'text-green-500'
-  },
-  {
-    label: 'Training Age',
-    value: '20+',
-    description: 'Years in martial arts',
-    icon: Calendar,
-    color: 'text-purple-500'
-  },
-  {
-    label: 'Citizenship',
-    value: '2',
-    description: 'Georgian & Spanish',
-    icon: Flag,
-    color: 'text-spanish-red'
+const CategoryIcon = ({ category }: { category: string }) => {
+  const icons = {
+    origen: MapPin,
+    formacion: Star,
+    profesional: Zap,
+    ufc: Trophy,
+    campeon: Crown
   }
-]
+  
+  const Icon = icons[category as keyof typeof icons]
+  return <Icon className="w-5 h-5" />
+}
 
 export default function AboutSection() {
-  const [activeEvent, setActiveEvent] = useState<string>('2025')
-  const [hoveredStat, setHoveredStat] = useState<string | null>(null)
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true)
   const sectionRef = useRef<HTMLDivElement>(null)
-  const isInView = useInView(sectionRef, { once: true, margin: "-100px" })
+  const containerRef = useRef<HTMLDivElement>(null)
+  const isInView = useInView(sectionRef, { once: true, margin: "-200px" })
+
+  const currentEvent = timelineEvents[currentIndex]
+
+  // Auto-play functionality
+  useEffect(() => {
+    if (!isAutoPlaying || !isInView) return
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % timelineEvents.length)
+    }, 5000)
+
+    return () => clearInterval(interval)
+  }, [isAutoPlaying, isInView])
+
+  const goToNext = () => {
+    setIsAutoPlaying(false)
+    setCurrentIndex((prev) => (prev + 1) % timelineEvents.length)
+  }
+
+  const goToPrevious = () => {
+    setIsAutoPlaying(false)
+    setCurrentIndex((prev) => (prev - 1 + timelineEvents.length) % timelineEvents.length)
+  }
+
+  const goToIndex = (index: number) => {
+    setIsAutoPlaying(false)
+    setCurrentIndex(index)
+  }
 
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        duration: 0.8,
-        staggerChildren: 0.1
+        duration: 1,
+        staggerChildren: 0.2
       }
     }
   }
 
   const itemVariants: Variants = {
-    hidden: { opacity: 0, y: 30 },
+    hidden: { opacity: 0, y: 40 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.6,
+        duration: 0.8,
         ease: "easeOut"
       }
     }
   }
-
-  const timelineVariants: Variants = {
-    hidden: { opacity: 0, scaleY: 0 },
-    visible: {
-      opacity: 1,
-      scaleY: 1,
-      transition: {
-        duration: 1,
-        ease: "easeOut",
-        staggerChildren: 0.1
-      }
-    }
-  }
-
-  const eventVariants: Variants = {
-    hidden: { opacity: 0, x: -50 },
-    visible: (i: number) => ({
-      opacity: 1,
-      x: 0,
-      transition: {
-        delay: i * 0.1,
-        duration: 0.5,
-        ease: "easeOut"
-      }
-    })
-  }
-
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'life': return 'bg-blue-500/10 border-blue-500/20 text-blue-600'
-      case 'career': return 'bg-spanish-gold/10 border-spanish-gold/20 text-spanish-gold'
-      case 'achievement': return 'bg-spanish-red/10 border-spanish-red/20 text-spanish-red'
-      default: return 'bg-muted'
-    }
-  }
-
-  const selectedEvent = timelineEvents.find(event => event.id === activeEvent)
 
   return (
     <section
       ref={sectionRef}
       id="about"
-      className="py-20 bg-gradient-to-br from-muted/30 via-background to-muted/30 relative overflow-hidden"
+      className="min-h-screen bg-topuria-white relative overflow-hidden"
     >
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,_var(--spanish-red)_0%,_transparent_50%),_radial-gradient(circle_at_75%_75%,_var(--spanish-gold)_0%,_transparent_50%)]" />
-      </div>
-
       <motion.div
         variants={containerVariants}
         initial="hidden"
         animate={isInView ? "visible" : "hidden"}
-        className="container mx-auto px-4 relative z-10"
+        className="relative h-screen"
       >
         {/* Section Header */}
-        <motion.div variants={itemVariants} className="text-center mb-16">
-          <Badge variant="outline" className="mb-4 px-4 py-2 text-spanish-red border-spanish-red/30">
-            <Heart className="w-4 h-4 mr-2" />
-            The Journey
-          </Badge>
-          
-          <h2 className="text-4xl md:text-6xl font-black text-foreground mb-6">
-            From Three Nations,
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-spanish-red to-spanish-gold">
-              One Champion
-            </span>
-          </h2>
-          
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            The extraordinary story of a fighter who carries the heart of Georgia, 
-            the spirit of Spain, and was born under German skies. 
-            Three cultures, one unbreakable will.
-          </p>
-        </motion.div>
-
-        {/* Personal Stats */}
         <motion.div 
           variants={itemVariants}
-          className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16 max-w-4xl mx-auto"
+          className="absolute top-8 left-1/2 transform -translate-x-1/2 z-20 text-center"
         >
-          {personalStats.map((stat, index) => (
-            <motion.div
-              key={stat.label}
-              variants={eventVariants}
-              custom={index}
-              onHoverStart={() => setHoveredStat(stat.label)}
-              onHoverEnd={() => setHoveredStat(null)}
-              whileHover={{ scale: 1.05 }}
-              className="text-center"
-            >
-              <Card className="p-6 bg-background/50 backdrop-blur-sm border-border/50 hover:border-spanish-red/30 transition-all duration-300">
-                <CardContent className="p-0">
-                  <motion.div
-                    animate={{
-                      scale: hoveredStat === stat.label ? 1.1 : 1,
-                      rotate: hoveredStat === stat.label ? 5 : 0
-                    }}
-                    className="flex items-center justify-center mb-3"
-                  >
-                    <stat.icon className={cn('w-8 h-8', stat.color)} />
-                  </motion.div>
-                  <div className="text-3xl font-black text-foreground mb-1">
-                    {stat.value}
-                  </div>
-                  <div className="text-sm font-semibold text-foreground mb-1">
-                    {stat.label}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    {stat.description}
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
+          <div className="inline-flex items-center gap-2 bg-topuria-white/90 backdrop-blur-sm border-2 border-topuria-red px-4 py-2 text-topuria-red font-bold uppercase tracking-wider text-sm shadow-solid-sm">
+            <Heart className="w-4 h-4" />
+            La Historia de El Matador
+          </div>
         </motion.div>
 
-        {/* Timeline Section */}
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
-          
-          {/* Timeline Navigation */}
-          <motion.div variants={itemVariants} className="space-y-4">
-            <h3 className="text-2xl font-bold text-foreground mb-6 flex items-center">
-              <Calendar className="w-6 h-6 mr-2 text-spanish-red" />
-              Life Timeline
-            </h3>
+        {/* Main Content Area */}
+        <div className="relative h-full">
+          {/* Background Image with Overlay */}
+          <motion.div
+            key={currentEvent.id}
+            initial={{ opacity: 0, scale: 1.1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8 }}
+            className="absolute inset-0"
+          >
+            {/* Placeholder background */}
+            <div className={cn(
+              'w-full h-full bg-gradient-to-br',
+              currentEvent.color
+            )} />
             
-            <motion.div 
-              variants={timelineVariants}
-              className="relative"
-            >
-              {/* Timeline Line */}
-              <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-spanish-red via-spanish-gold to-spanish-red" />
-              
-              {/* Timeline Events */}
-              <div className="space-y-6">
-                {timelineEvents.map((event, index) => (
-                  <motion.div
-                    key={event.id}
-                    variants={eventVariants}
-                    custom={index}
-                    whileHover={{ x: 4 }}
-                    onClick={() => setActiveEvent(event.id)}
-                    className={cn(
-                      'relative flex items-center cursor-pointer group',
-                      'transition-all duration-300'
-                    )}
-                  >
-                    {/* Timeline Dot */}
-                    <motion.div
-                      whileHover={{ scale: 1.2 }}
-                      className={cn(
-                        'relative z-10 w-12 h-12 rounded-full border-2 flex items-center justify-center',
-                        'transition-all duration-300',
-                        activeEvent === event.id
-                          ? 'bg-spanish-red border-spanish-red text-white shadow-lg'
-                          : 'bg-background border-border text-muted-foreground group-hover:border-spanish-red/50'
-                      )}
-                    >
-                      <event.icon className="w-5 h-5" />
-                    </motion.div>
+            {/* Dark overlay */}
+            <div className="absolute inset-0 bg-black/60" />
+            
+            {/* Pattern overlay */}
+            <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_white_1px,_transparent_1px)] bg-[length:50px_50px]" />
+          </motion.div>
 
-                    {/* Event Content */}
-                    <div className="ml-6 flex-1">
-                      <div className="flex items-center space-x-3 mb-1">
-                        <span className={cn(
-                          'text-sm font-bold px-2 py-1 rounded-full',
-                          getCategoryColor(event.category)
-                        )}>
-                          {event.year}
-                        </span>
-                        <Badge variant="outline" className="text-xs">
-                          {event.location}
-                        </Badge>
-                      </div>
-                      
-                      <h4 className={cn(
-                        'font-semibold transition-colors',
-                        activeEvent === event.id 
-                          ? 'text-spanish-red' 
-                          : 'text-foreground group-hover:text-spanish-red'
-                      )}>
-                        {event.title}
-                      </h4>
-                      
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {event.description}
-                      </p>
+          {/* Content */}
+          <div className="relative z-10 h-full flex items-center">
+            <div className="container mx-auto px-6 lg:px-8">
+              <div className="grid lg:grid-cols-2 gap-12 items-center">
+                
+                {/* Left Side - Event Content */}
+                <motion.div
+                  key={`content-${currentEvent.id}`}
+                  initial={{ opacity: 0, x: -50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.8, delay: 0.2 }}
+                  className="text-white"
+                >
+                  {/* Category Badge */}
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-10 h-10 bg-topuria-red flex items-center justify-center">
+                      <CategoryIcon category={currentEvent.category} />
+                    </div>
+                    <span className="bg-topuria-white/20 backdrop-blur-sm px-3 py-1 text-sm font-bold uppercase tracking-wider">
+                      {currentEvent.category}
+                    </span>
+                  </div>
+
+                  {/* Year */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                    className="text-6xl md:text-8xl font-black text-topuria-red mb-4 leading-none"
+                  >
+                    {currentEvent.year}
+                  </motion.div>
+
+                  {/* Title & Subtitle */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5 }}
+                  >
+                    <h2 className="text-4xl md:text-5xl font-black text-white mb-2 leading-tight">
+                      {currentEvent.title}
+                    </h2>
+                    <h3 className="text-xl md:text-2xl font-medium text-topuria-gold mb-4">
+                      {currentEvent.subtitle}
+                    </h3>
+                  </motion.div>
+
+                  {/* Date & Location */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
+                    className="flex items-center gap-4 mb-6 text-white/80"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4" />
+                      <span className="font-medium">{currentEvent.date}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4" />
+                      <span className="font-medium">{currentEvent.location}</span>
                     </div>
                   </motion.div>
-                ))}
+
+                  {/* Description */}
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.7 }}
+                    className="text-xl text-white/90 mb-6 leading-relaxed"
+                  >
+                    {currentEvent.description}
+                  </motion.p>
+
+                  {/* Details List */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.8 }}
+                    className="space-y-3"
+                  >
+                    {currentEvent.details.map((detail, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.9 + index * 0.1 }}
+                        className="flex items-start gap-3"
+                      >
+                        <div className="w-2 h-2 bg-topuria-gold mt-2 flex-shrink-0" />
+                        <span className="text-white/80 leading-relaxed">{detail}</span>
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                </motion.div>
+
+                {/* Right Side - Visual Element */}
+                <motion.div
+                  key={`visual-${currentEvent.id}`}
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.8, delay: 0.3 }}
+                  className="relative"
+                >
+                  {/* Large Icon Display */}
+                  <div className="relative">
+                    <motion.div
+                      animate={{
+                        rotate: [0, 5, -5, 0],
+                        scale: [1, 1.05, 1]
+                      }}
+                      transition={{
+                        duration: 6,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                      className="w-80 h-80 mx-auto bg-topuria-white/10 backdrop-blur-sm border-4 border-topuria-white/30 flex items-center justify-center"
+                    >
+                      <currentEvent.icon className="w-40 h-40 text-topuria-white" />
+                    </motion.div>
+                    
+                    {/* Floating elements */}
+                    <motion.div
+                      animate={{
+                        y: [-10, 10, -10],
+                        opacity: [0.5, 1, 0.5]
+                      }}
+                      transition={{
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                      className="absolute -top-4 -right-4 w-8 h-8 bg-topuria-gold"
+                    />
+                    
+                    <motion.div
+                      animate={{
+                        y: [10, -10, 10],
+                        opacity: [0.5, 1, 0.5]
+                      }}
+                      transition={{
+                        duration: 4,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: 2
+                      }}
+                      className="absolute -bottom-4 -left-4 w-6 h-6 bg-topuria-red"
+                    />
+                  </div>
+                </motion.div>
+
               </div>
-            </motion.div>
-          </motion.div>
-
-          {/* Event Details */}
-          <motion.div variants={itemVariants} className="lg:sticky lg:top-8">
-            {selectedEvent && (
-              <motion.div
-                key={selectedEvent.id}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <Card className="p-8 bg-background/80 backdrop-blur-md border-spanish-red/20">
-                  <CardContent className="p-0">
-                    {/* Event Header */}
-                    <div className="flex items-center space-x-4 mb-6">
-                      <div className="w-16 h-16 bg-spanish-red/10 rounded-full flex items-center justify-center">
-                        <selectedEvent.icon className="w-8 h-8 text-spanish-red" />
-                      </div>
-                      <div>
-                        <div className="flex items-center space-x-2 mb-1">
-                          <Badge className="bg-spanish-red text-white">
-                            {selectedEvent.year}
-                          </Badge>
-                          <Badge variant="outline">
-                            {selectedEvent.location}
-                          </Badge>
-                        </div>
-                        <h3 className="text-2xl font-bold text-foreground">
-                          {selectedEvent.title}
-                        </h3>
-                      </div>
-                    </div>
-
-                    {/* Event Description */}
-                    <p className="text-lg text-muted-foreground mb-6">
-                      {selectedEvent.description}
-                    </p>
-
-                    {/* Event Details */}
-                    {selectedEvent.details && (
-                      <div className="space-y-3">
-                        <h4 className="font-semibold text-foreground">Key Details:</h4>
-                        <ul className="space-y-2">
-                          {selectedEvent.details.map((detail, index) => (
-                            <motion.li
-                              key={index}
-                              initial={{ opacity: 0, x: -10 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ delay: index * 0.1 }}
-                              className="flex items-start space-x-2 text-sm text-muted-foreground"
-                            >
-                              <div className="w-1.5 h-1.5 bg-spanish-red rounded-full mt-2 flex-shrink-0" />
-                              <span>{detail}</span>
-                            </motion.li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </motion.div>
-            )}
-          </motion.div>
+            </div>
+          </div>
         </div>
 
-        {/* Cultural Heritage */}
-        <motion.div variants={itemVariants} className="mt-20">
-          <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold text-foreground mb-4">
-              Cultural Heritage
-            </h3>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Three nations shaped the champion. Each culture contributed to his unique fighting style and mentality.
-            </p>
-          </div>
+        {/* Navigation Controls */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
+          <div className="flex items-center gap-6">
+            {/* Previous Button */}
+            <button
+              onClick={goToPrevious}
+              className="w-12 h-12 bg-topuria-white/20 backdrop-blur-sm border-2 border-topuria-white/30 flex items-center justify-center text-white hover:bg-topuria-white/30 transition-all duration-300 hover-press"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                country: 'Germany',
-                flag: '🇩🇪',
-                contribution: 'Discipline & Precision',
-                description: 'German engineering mindset brought systematic approach to training and technique refinement.',
-                color: 'border-yellow-500/30 hover:border-yellow-500'
-              },
-              {
-                country: 'Georgia',
-                flag: '🇬🇪',
-                contribution: 'Warrior Spirit',
-                description: 'Georgian wrestling traditions and unbreakable warrior mentality formed his fighting foundation.',
-                color: 'border-red-500/30 hover:border-red-500'
-              },
-              {
-                country: 'Spain',
-                flag: '🇪🇸',
-                contribution: 'Passion & Heart',
-                description: 'Spanish passion and "El Matador" spirit gave him the killer instinct and showmanship.',
-                color: 'border-spanish-red/30 hover:border-spanish-red'
-              }
-            ].map((culture, index) => (
-              <motion.div
-                key={culture.country}
-                variants={eventVariants}
-                custom={index}
-                whileHover={{ y: -4, scale: 1.02 }}
-                className={cn(
-                  'p-6 rounded-xl border-2 bg-background/50 backdrop-blur-sm',
-                  'transition-all duration-300',
-                  culture.color
-                )}
-              >
-                <div className="text-4xl mb-4 text-center">{culture.flag}</div>
-                <h4 className="text-xl font-bold text-foreground mb-2 text-center">
-                  {culture.country}
-                </h4>
-                <div className="text-spanish-red font-semibold text-center mb-3">
-                  {culture.contribution}
-                </div>
-                <p className="text-sm text-muted-foreground text-center">
-                  {culture.description}
-                </p>
-              </motion.div>
-            ))}
+            {/* Timeline Dots */}
+            <div className="flex items-center gap-2">
+              {timelineEvents.map((event, index) => (
+                <button
+                  key={event.id}
+                  onClick={() => goToIndex(index)}
+                  className={cn(
+                    'relative group transition-all duration-300',
+                    index === currentIndex ? 'scale-125' : 'hover:scale-110'
+                  )}
+                >
+                  <div className={cn(
+                    'w-4 h-4 border-2 transition-all duration-300',
+                    index === currentIndex
+                      ? 'bg-topuria-red border-topuria-red'
+                      : 'bg-topuria-white/20 border-topuria-white/50 hover:bg-topuria-white/40'
+                  )} />
+                  
+                  {/* Tooltip */}
+                  <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                    <div className="bg-topuria-black text-topuria-white px-3 py-1 text-xs font-bold whitespace-nowrap">
+                      {event.year} - {event.title}
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            {/* Next Button */}
+            <button
+              onClick={goToNext}
+              className="w-12 h-12 bg-topuria-white/20 backdrop-blur-sm border-2 border-topuria-white/30 flex items-center justify-center text-white hover:bg-topuria-white/30 transition-all duration-300 hover-press"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
           </div>
-        </motion.div>
+        </div>
+
+        {/* Auto-play indicator */}
+        {isAutoPlaying && (
+          <div className="absolute top-8 right-8 z-20">
+            <div className="flex items-center gap-2 bg-topuria-white/20 backdrop-blur-sm px-3 py-2 text-white text-sm">
+              <div className="w-2 h-2 bg-topuria-red animate-pulse" />
+              <span>Auto-reproducción</span>
+              <button 
+                onClick={() => setIsAutoPlaying(false)}
+                className="ml-2 text-topuria-white/60 hover:text-topuria-white"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        )}
 
       </motion.div>
     </section>
