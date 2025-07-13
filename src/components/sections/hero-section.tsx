@@ -350,7 +350,7 @@ export default function HeroSection() {
               className="relative w-full max-w-md h-[500px] lg:h-[600px]"
             >
               <Image
-                src="/images/topuria.webp"
+                src="/images/topuria-hero.webp"
                 alt="Ilia Topuria - El Matador"
                 fill
                 className="object-contain object-bottom"
