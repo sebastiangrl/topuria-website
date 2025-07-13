@@ -116,7 +116,7 @@ export function FightSlider({ peleas, peleaSeleccionada, onSelectPelea }: FightS
             )}
           >
             {/* Opponent Face - A la izquierda y MÁS GRANDE */}
-            <div className="flex-shrink-0 w-10 h-10 border border-white bg-gray-900 overflow-hidden">
+            <div className="flex-shrink-0 w-10 h-10 border border-white bg-gray-900 overflow-hidden relative">
               <Image
                 src={`/images/faces/face-${pelea.oponente.toLowerCase().replace(' ', '-')}.webp`}
                 alt={`${pelea.oponente} face`}
