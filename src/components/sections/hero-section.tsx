@@ -130,7 +130,7 @@ export default function HeroSection() {
           playsInline
           preload="metadata"
         >
-          <source src="/videos/topuria-vs-charles.mp4" type="video/mp4" />
+          <source src="/videos/topuria-vs-charles.webm" type="video/webm" />
         </video>
         
         {/* Heavy Dark Overlay for Sophisticated Look */}
