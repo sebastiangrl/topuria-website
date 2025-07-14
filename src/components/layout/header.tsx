@@ -16,38 +16,15 @@ export default function Header({ className }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState('home')
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isVisible, setIsVisible] = useState(true)
-  const [lastScrollY, setLastScrollY] = useState(0)
 
-  // Handle scroll effect and header visibility
+  // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY
-      
-      // Update isScrolled state
-      setIsScrolled(currentScrollY > 10)
-      
-      // Header visibility logic
-      if (currentScrollY < 10) {
-        // Always show header at top
-        setIsVisible(true)
-      } else if (isMobileMenuOpen) {
-        // Always show header when mobile menu is open
-        setIsVisible(true)
-      } else if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        // Hide header when scrolling down (after 100px)
-        setIsVisible(false)
-      } else if (currentScrollY < lastScrollY) {
-        // Show header when scrolling up
-        setIsVisible(true)
-      }
-      
-      setLastScrollY(currentScrollY)
+      setIsScrolled(window.scrollY > 10)
     }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [lastScrollY, isMobileMenuOpen])
+  }, [])
 
   // Handle active section detection
   useEffect(() => {
@@ -95,14 +72,7 @@ export default function Header({ className }: HeaderProps) {
   return (
     <motion.header
       initial={{ y: 0 }}
-      animate={{ 
-        y: isVisible ? 0 : -100,
-        opacity: isVisible ? 1 : 0 
-      }}
-      transition={{ 
-        duration: 0.3, 
-        ease: [0.25, 0.46, 0.45, 0.94] 
-      }}
+      animate={{ y: 0 }}
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
         isScrolled
