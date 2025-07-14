@@ -61,7 +61,7 @@ export default function Footer() {
       y: 0,
       transition: {
         duration: 0.8,
-        staggerChildren: 0.2
+        staggerChildren: 0.1
       }
     }
   }
@@ -79,66 +79,63 @@ export default function Footer() {
   }
 
   return (
-    <footer className="relative bg-topuria-black text-topuria-white py-16">
-      {/* Subtle pattern overlay */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_white_1px,_transparent_1px)] bg-[length:40px_40px]" />
+    <footer className="relative bg-topuria-black text-topuria-white">
+      {/* Gradient background similar to the image */}
+      <div className="absolute inset-0 bg-gradient-to-t from-topuria-black via-topuria-black/95 to-topuria-black/90" />
+      
+      {/* Subtle noise texture */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_white_0.5px,_transparent_0.5px)] bg-[length:20px_20px]" />
       </div>
 
       <motion.div
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
+        viewport={{ once: true, margin: "-50px" }}
         className="relative"
       >
-        <div className="container mx-auto px-6 lg:px-8">
+        <div className="container mx-auto px-6 lg:px-8 py-20">
           <div className="text-center space-y-12">
             
-            {/* Main Title */}
-            <motion.div variants={itemVariants}>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-topuria-white mb-4">
-                ILIA TOPURIA
-              </h2>
-              <p className="text-topuria-gold/80 text-lg md:text-xl font-medium italic">
-                &ldquo;El Matador&rdquo;
-              </p>
-            </motion.div>
-
-            {/* Key Stats */}
-            <motion.div variants={itemVariants}>
-              <div className="flex justify-center items-center gap-12 md:gap-16">
-                <div className="text-center">
-                  <div className="text-3xl md:text-4xl font-black text-topuria-white mb-2">
-                    17-0-0
-                  </div>
-                  <div className="text-sm uppercase tracking-widest text-topuria-white/60">
-                    Invicto
-                  </div>
-                </div>
+            {/* Main TOPURIA Text with Image Mask */}
+            <motion.div variants={itemVariants} className="relative">
+              <div className="relative inline-block">
+                <h1 
+                  className="text-8xl md:text-9xl lg:text-[12rem] xl:text-[14rem] font-black leading-none tracking-tighter"
+                  style={{
+                    backgroundImage: 'url(/images/gallery/gallery6.webp)',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center 40%',
+                    backgroundClip: 'text',
+                    WebkitBackgroundClip: 'text',
+                    color: 'transparent',
+                    WebkitTextFillColor: 'transparent',
+                    textShadow: '0 0 30px rgba(255, 255, 255, 0.1)',
+                    WebkitTextStroke: '1px rgba(128, 128, 128, 0.3)'
+                  }}
+                >
+                  TOPURIA
+                </h1>
                 
-                <div className="w-px h-16 bg-topuria-white/20" />
-                
-                <div className="text-center">
-                  <div className="text-3xl md:text-4xl font-black text-topuria-gold mb-2">
-                    #1
-                  </div>
-                  <div className="text-sm uppercase tracking-widest text-topuria-white/60">
-                    P4P Mundial
-                  </div>
-                </div>
-                
-                <div className="w-px h-16 bg-topuria-white/20" />
-                
-                <div className="text-center">
-                  <div className="text-3xl md:text-4xl font-black text-topuria-red mb-2">
-                    2
-                  </div>
-                  <div className="text-sm uppercase tracking-widest text-topuria-white/60">
-                    Cinturones
-                  </div>
+                {/* Glow effect behind text */}
+                <div 
+                  className="absolute inset-0 text-8xl md:text-9xl lg:text-[12rem] xl:text-[14rem] font-black leading-none tracking-tighter -z-10"
+                  style={{
+                    color: 'rgba(255, 255, 255, 0.05)',
+                    filter: 'blur(20px)'
+                  }}
+                >
+                  TOPURIA
                 </div>
               </div>
+              
+              <motion.p 
+                variants={itemVariants}
+                className="text-topuria-gold/90 text-xl md:text-2xl font-medium italic mt-4"
+              >
+                &ldquo;El Matador&rdquo; • Bicampeón UFC
+              </motion.p>
             </motion.div>
 
             {/* Social Links */}
@@ -148,11 +145,12 @@ export default function Footer() {
                   <motion.div
                     key={social.name}
                     initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.6 + index * 0.1 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 + index * 0.05 }}
                     whileHover={{ 
                       scale: 1.1, 
-                      y: -4,
+                      y: -2,
                       transition: { duration: 0.2 }
                     }}
                   >
@@ -160,28 +158,31 @@ export default function Footer() {
                       href={social.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-12 h-12 bg-topuria-white/10 hover:bg-topuria-red transition-all duration-300 flex items-center justify-center group"
+                      className="w-10 h-10 bg-transparent border border-topuria-white/20 hover:border-topuria-red/60 transition-all duration-300 flex items-center justify-center group"
+                      aria-label={`Seguir a Ilia Topuria en ${social.name}`}
                     >
-                      <social.icon className="w-5 h-5 text-topuria-white group-hover:text-topuria-white" />
+                      <social.icon className="w-4 h-4 text-topuria-white/60 group-hover:text-topuria-red transition-colors duration-300" />
                     </Link>
                   </motion.div>
                 ))}
               </div>
             </motion.div>
 
-            {/* Separator */}
-            <motion.div variants={itemVariants}>
-              <div className="w-24 h-px bg-topuria-white/20 mx-auto" />
-            </motion.div>
+            {/* Bottom Section */}
+            <motion.div variants={itemVariants} className="space-y-6">
+              
+              {/* Decorative Line */}
+              <div className="relative">
+                <div className="w-20 h-px bg-topuria-white/20 mx-auto" />
+              </div>
 
-            {/* Bottom Text */}
-            <motion.div variants={itemVariants}>
-              <div className="text-center text-topuria-white/60 text-sm">
-                <p className="mb-2">
+              {/* Copyright and Info */}
+              <div className="text-center text-topuria-white/50 text-sm space-y-2">
+                <p>
                   © {currentYear} Ilia Topuria. Todos los derechos reservados.
                 </p>
-                <p>
-                  Bicampeón UFC • Invicto • El Matador
+                <p className="text-xs text-topuria-white/30">
+                  Desarrollado por <span className="text-topuria-gold/60 font-medium">DEVAIJS</span>
                 </p>
               </div>
             </motion.div>
@@ -190,21 +191,26 @@ export default function Footer() {
         </div>
       </motion.div>
 
-      {/* Corner accent lines */}
-      <div className="absolute inset-0 pointer-events-none">
+      {/* Decorative corner elements */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        {/* Subtle bottom glow effect with Topuria colors */}
+        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-96 h-32 bg-gradient-to-t from-topuria-red/20 via-topuria-gold/10 to-transparent blur-3xl" />
+        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-64 h-20 bg-gradient-to-t from-topuria-red/30 via-topuria-gold/20 to-transparent blur-xl" />
+        
+        {/* Corner accent lines - minimal */}
         <motion.div
           initial={{ scaleX: 0 }}
           whileInView={{ scaleX: 1 }}
           viewport={{ once: true }}
-          transition={{ delay: 1, duration: 1.5 }}
-          className="absolute bottom-0 left-0 w-32 h-px bg-topuria-red origin-left"
+          transition={{ delay: 1.5, duration: 1.5 }}
+          className="absolute bottom-0 left-0 w-20 h-px bg-topuria-red/40 origin-left"
         />
         <motion.div
           initial={{ scaleX: 0 }}
           whileInView={{ scaleX: 1 }}
           viewport={{ once: true }}
-          transition={{ delay: 1.2, duration: 1.5 }}
-          className="absolute bottom-0 right-0 w-32 h-px bg-topuria-gold origin-right"
+          transition={{ delay: 1.7, duration: 1.5 }}
+          className="absolute bottom-0 right-0 w-20 h-px bg-topuria-gold/40 origin-right"
         />
       </div>
     </footer>

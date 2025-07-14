@@ -47,22 +47,22 @@ export const SOCIAL_LINKS = {
 // Navigation menu items
 export const NAV_ITEMS = [
   {
-    label: 'Home',
+    label: 'Inicio',
     href: '#home',
     id: 'home'
   },
   {
-    label: 'Stats',
+    label: 'Estadísticas',
     href: '#stats',
     id: 'stats'
   },
   {
-    label: 'Career',
+    label: 'Carrera',
     href: '#career',
     id: 'career'
   },
   {
-    label: 'Gallery',
+    label: 'Galería',
     href: '#gallery',
     id: 'gallery'
   }

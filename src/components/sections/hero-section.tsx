@@ -3,25 +3,17 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { Crown, ArrowDown, Play, Pause } from 'lucide-react'
-import Image from 'next/image'
+import { Crown, ArrowDown } from 'lucide-react'
 import type { Variants } from 'framer-motion'
 
 export default function HeroSection() {
   const videoRef = useRef<HTMLVideoElement>(null)
-  const [isPlaying, setIsPlaying] = useState(true)
   const [isVideoLoaded, setIsVideoLoaded] = useState(false)
   
   // Scroll effects
   const { scrollYProgress } = useScroll()
   const titleY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"])
   const overlayOpacity = useTransform(scrollYProgress, [0, 0.5], [0.3, 0.7])
-  
-  // Additional transforms for scroll effects
-  const transitionOpacity = useTransform(scrollYProgress, [0, 0.3], [0, 1])
-  const floatingImageY = useTransform(scrollYProgress, [0, 0.5], [100, -50])
-  const floatingImageOpacity = useTransform(scrollYProgress, [0.1, 0.3, 0.7], [0, 1, 0])
-  const floatingImageScale = useTransform(scrollYProgress, [0.1, 0.3], [0.8, 1])
 
   // Stats actualizados 2025
   const currentStats = {
@@ -32,24 +24,11 @@ export default function HeroSection() {
     titles: 2 // Peso pluma y peso ligero
   }
 
-  // Control de video
-  const toggleVideo = () => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause()
-      } else {
-        videoRef.current.play()
-      }
-      setIsPlaying(!isPlaying)
-    }
-  }
-
-  // Auto-play y loop del video
+  // Auto-play del video
   useEffect(() => {
     if (videoRef.current && isVideoLoaded) {
       videoRef.current.play().catch(() => {
         // Si no se puede autoplay, no hacer nada
-        setIsPlaying(false)
       })
     }
   }, [isVideoLoaded])
@@ -128,9 +107,15 @@ export default function HeroSection() {
           className="w-full h-full object-cover"
           muted
           playsInline
+          loop
+          autoPlay
           preload="metadata"
         >
           <source src="/videos/topuria-vs-charles.webm" type="video/webm" />
+          <source src="/videos/topuria-vs-charles.mp4" type="video/mp4" />
+          <p className="text-white/60 text-center mt-4">
+            Tu navegador no soporta el elemento video.
+          </p>
         </video>
         
         {/* Heavy Dark Overlay for Sophisticated Look */}
@@ -145,18 +130,6 @@ export default function HeroSection() {
         {/* Additional subtle texture overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-transparent via-topuria-black/20 to-topuria-black/40" />
       </div>
-
-      {/* Video Controls - More Subtle */}
-      <motion.button
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.6 }}
-        whileHover={{ opacity: 1 }}
-        transition={{ delay: 2 }}
-        onClick={toggleVideo}
-        className="absolute top-6 right-6 z-30 bg-topuria-black/60 backdrop-blur-sm text-topuria-white/70 p-3 hover:bg-topuria-black/80 hover:text-topuria-white transition-all duration-500"
-      >
-        {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-      </motion.button>
 
       {/* Main Content */}
       <motion.div
@@ -173,7 +146,7 @@ export default function HeroSection() {
               variants={subtitleVariants}
               className="mb-8 flex justify-center"
             >
-              <div className="inline-flex items-center gap-3 bg-topuria-black/80 backdrop-blur-sm text-topuria-white/90 px-6 py-3 font-bold uppercase tracking-widest text-sm border border-topuria-white/10">
+              <div className="inline-flex items-center gap-3 bg-topuria-black/80 backdrop-blur-sm text-topuria-white/90 px-6 py-3 rounded-full font-bold uppercase tracking-widest text-sm border border-topuria-white/10">
                 <Crown className="w-4 h-4 text-topuria-gold/70" />
                 Bicampeón UFC - Dos Divisiones
               </div>
@@ -192,7 +165,7 @@ export default function HeroSection() {
               
               <div className="flex items-center justify-center gap-4 text-lg md:text-xl">
                 <span className="text-topuria-gold/80 font-bold italic">&ldquo;El Matador&rdquo;</span>
-                <div className="w-1 h-1 bg-topuria-white/40" />
+                <div className="w-1 h-1 bg-topuria-white/40 rounded-full" />
                 <span className="text-topuria-white/60 font-bold">Bicampeón UFC</span>
               </div>
             </motion.div>
@@ -237,7 +210,7 @@ export default function HeroSection() {
             >
               <button
                 onClick={() => scrollToSection('about')}
-                className="bg-transparent border border-topuria-white/30 text-topuria-white/90 px-8 py-3 font-bold uppercase tracking-widest text-sm hover:bg-topuria-white/10 hover:border-topuria-white/60 transition-all duration-500"
+                className="bg-transparent border-2 border-topuria-gold/60 text-topuria-white/90 px-8 py-4 rounded-full font-bold uppercase tracking-widest text-sm hover:bg-topuria-gold/10 hover:border-topuria-gold transition-all duration-500 hover:scale-105"
               >
                 Conoce al Bicampeón
               </button>
@@ -255,11 +228,12 @@ export default function HeroSection() {
         className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-30"
       >
         <motion.div
-          animate={{ y: [0, 6, 0] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-          className="flex flex-col items-center space-y-2 text-topuria-white/30 cursor-pointer"
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="flex flex-col items-center space-y-2 text-topuria-white/40 cursor-pointer hover:text-topuria-white/60 transition-colors"
           onClick={() => scrollToSection('about')}
         >
+          <span className="text-xs uppercase tracking-widest mb-2">Scroll</span>
           <ArrowDown className="w-4 h-4" />
         </motion.div>
       </motion.div>
@@ -293,58 +267,6 @@ export default function HeroSection() {
           className="absolute bottom-0 right-0 w-px h-20 bg-topuria-gold/30 origin-bottom"
         />
       </div>
-
-      {/* Transition to Next Section with Scroll-triggered Champion Image */}
-      <motion.div
-        className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-topuria-white via-topuria-white/80 to-transparent z-30 pointer-events-none"
-        style={{
-          opacity: transitionOpacity
-        }}
-      />
-      
-      {/* Floating Champion Image - Scroll Triggered */}
-      <motion.div
-        className="absolute right-8 bottom-0 z-25 pointer-events-none"
-        style={{
-          y: floatingImageY,
-          opacity: floatingImageOpacity,
-          scale: floatingImageScale
-        }}
-      >
-        <motion.div
-          animate={{
-            y: [0, -10, 0]
-          }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-          className="relative w-48 h-64 md:w-60 md:h-80"
-        >
-          <Image
-            src="/images/topuria-hero.webp"
-            alt="Ilia Topuria con cinturón UFC"
-            fill
-            className="object-contain filter drop-shadow-lg"
-            priority
-          />
-          
-          {/* Glow effect behind the image */}
-          <motion.div
-            animate={{
-              opacity: [0.3, 0.6, 0.3],
-              scale: [0.8, 1.2, 0.8]
-            }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-            className="absolute inset-0 bg-topuria-gold/20 blur-xl -z-10"
-          />
-        </motion.div>
-      </motion.div>
 
     </section>
   )
