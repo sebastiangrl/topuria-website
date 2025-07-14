@@ -33,8 +33,13 @@ export default function Header({ className }: HeaderProps) {
       const currentSection = sections.find(section => {
         const element = document.getElementById(section)
         if (element) {
-          const rect = element.getBoundingClientRect()
-          return rect.top <= 100 && rect.bottom >= 100
+          try {
+            const rect = element.getBoundingClientRect()
+            return rect.top <= 100 && rect.bottom >= 100
+          } catch (error) {
+            console.warn(`Error getting bounds for section ${section}:`, error)
+            return false
+          }
         }
         return false
       })
@@ -60,6 +65,7 @@ export default function Header({ className }: HeaderProps) {
         behavior: 'smooth'
       })
     }
+    // Cerrar el menú móvil después de hacer clic
     setIsMobileMenuOpen(false)
   }
 
@@ -256,7 +262,11 @@ export default function Header({ className }: HeaderProps) {
                     transition={{ duration: 0.3, delay: index * 0.1 }}
                   >
                     <button
-                      onClick={() => scrollToSection(item.id)}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        scrollToSection(item.id)
+                      }}
                       className={cn(
                         'w-full text-left px-6 py-4 text-base font-bold uppercase tracking-wider transition-all duration-300',
                         'hover:bg-topuria-red/10 hover:text-topuria-red',

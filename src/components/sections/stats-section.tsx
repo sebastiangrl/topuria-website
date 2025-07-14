@@ -185,11 +185,11 @@ const CircularProgress = ({ stat, delay = 0 }: { stat: CircularStat; delay?: num
   return (
     <div ref={elementRef} className="text-center group cursor-pointer">
       <motion.div 
-        className="relative w-20 h-20 mx-auto mb-2"
+        className="relative w-16 h-16 lg:w-20 lg:h-20 mx-auto mb-2"
         whileHover={{ scale: 1.05 }}
         transition={{ duration: 0.2 }}
       >
-        <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 80 80">
+        <svg className="w-16 h-16 lg:w-20 lg:h-20 transform -rotate-90" viewBox="0 0 80 80">
           <circle
             cx="40"
             cy="40"
@@ -212,7 +212,7 @@ const CircularProgress = ({ stat, delay = 0 }: { stat: CircularStat; delay?: num
         </svg>
         
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <div className="text-lg font-black text-topuria-black">
+          <div className="text-sm lg:text-lg font-black text-topuria-black">
             {Math.round(currentPercentage)}%
           </div>
         </div>
@@ -222,10 +222,10 @@ const CircularProgress = ({ stat, delay = 0 }: { stat: CircularStat; delay?: num
         whileHover={{ y: -1 }}
         transition={{ duration: 0.2 }}
       >
-        <h4 className="font-bold text-topuria-black text-sm mb-1 group-hover:text-topuria-red transition-colors duration-200">
+        <h4 className="font-bold text-topuria-black text-xs lg:text-sm mb-1 group-hover:text-topuria-red transition-colors duration-200">
           {stat.label}
         </h4>
-        <p className="text-xs text-gray-600 leading-tight">
+        <p className="text-xs text-gray-600 leading-tight hidden lg:block">
           {stat.description}
         </p>
       </motion.div>
@@ -278,9 +278,9 @@ const StatCard = ({ stat, index }: { stat: SimpleStat; index: number }) => {
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
       transition={{ delay: index * 0.1, duration: 0.5 }}
       whileHover={{ y: -2, scale: 1.02 }}
-      className="text-center p-3 bg-gray-50 border-l-4 border-topuria-red hover:bg-gray-100 transition-all duration-300 cursor-pointer group"
+      className="text-center p-2 lg:p-3 bg-gray-50 border-l-4 border-topuria-red hover:bg-gray-100 transition-all duration-300 cursor-pointer group"
     >
-      <div className="text-2xl font-black text-topuria-black mb-1 group-hover:text-topuria-red transition-colors duration-200">
+      <div className="text-lg lg:text-2xl font-black text-topuria-black mb-1 group-hover:text-topuria-red transition-colors duration-200">
         {currentValue}
       </div>
       <div className="text-xs text-gray-500 uppercase tracking-wide mb-1 font-bold">
@@ -303,12 +303,12 @@ const MiniCardComponent = ({ card, delay = 0 }: { card: MiniCard; delay?: number
       initial={{ opacity: 0, scale: 0.8 }}
       animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
       transition={{ delay: 1.0 + delay, duration: 0.6 }}
-      className="bg-topuria-white border-2 border-gray-200 p-3 shadow-sm hover:border-topuria-red transition-all duration-300 text-center hover:shadow-lg"
+      className="bg-topuria-white border-2 border-gray-200 p-2 lg:p-3 shadow-sm hover:border-topuria-red transition-all duration-300 text-center hover:shadow-lg"
     >
-      <div className="w-8 h-8 mx-auto mb-2 flex items-center justify-center text-topuria-red">
-        <card.icon className="w-5 h-5" />
+      <div className="w-6 h-6 lg:w-8 lg:h-8 mx-auto mb-2 flex items-center justify-center text-topuria-red">
+        <card.icon className="w-4 h-4 lg:w-5 lg:h-5" />
       </div>
-      <div className="text-sm font-bold text-topuria-black">{card.title}</div>
+      <div className="text-xs lg:text-sm font-bold text-topuria-black">{card.title}</div>
       <div className="text-xs text-gray-600">{card.subtitle}</div>
     </motion.div>
   )
@@ -322,7 +322,7 @@ export default function StatsSection() {
     <section
       ref={sectionRef}
       id="stats"
-      className="h-screen bg-topuria-white relative overflow-hidden flex items-center"
+      className="min-h-screen lg:h-screen bg-topuria-white relative overflow-hidden flex items-center py-12 lg:py-0"
     >
       {/* Background "MATADOR" text */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
@@ -330,15 +330,117 @@ export default function StatsSection() {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={isInView ? { opacity: 0.04, scale: 1 } : { opacity: 0, scale: 0.8 }}
           transition={{ duration: 1, delay: 0.5 }}
-          className="text-[10rem] md:text-[12rem] lg:text-[14rem] xl:text-[16rem] font-black text-topuria-black leading-none"
+          className="text-[6rem] md:text-[8rem] lg:text-[12rem] xl:text-[16rem] font-black text-topuria-black leading-none"
           style={{ letterSpacing: '0.15em' }}
         >
           MATADOR
         </motion.h1>
       </div>
 
-      <div className="container mx-auto px-4 lg:px-6 relative z-20 h-full">
-        <div className="grid lg:grid-cols-3 gap-6 items-center h-full">
+      <div className="container mx-auto px-4 lg:px-6 relative z-20 w-full">
+        
+        {/* MOBILE LAYOUT - Stack vertical */}
+        <div className="lg:hidden space-y-8">
+          
+          {/* Mobile Header */}
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-center mb-8"
+          >
+            {/* Champion Badge */}
+            <div className="bg-topuria-red text-topuria-white px-4 py-2 font-bold uppercase tracking-wider text-xs mb-4 inline-block">
+              Campeón Activo
+            </div>
+            
+            {/* Title */}
+            <h2 className="text-5xl font-black text-topuria-black leading-none tracking-[0.2em] mb-2">
+              ILIA
+            </h2>
+            <h1 className="text-4xl font-black text-topuria-red leading-none tracking-[0.1em]">
+              TOPURIA
+            </h1>
+          </motion.div>
+
+          {/* Mobile Fighter Image */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
+            transition={{ duration: 1, delay: 0.3 }}
+            className="relative mx-auto"
+          >
+            <div className="relative h-80 w-64 mx-auto">
+              <Image
+                src="/images/ilia-hero.webp"
+                alt="Ilia Topuria - El Matador"
+                fill
+                className="object-contain object-bottom"
+                priority
+              />
+            </div>
+            
+            {/* Record overlay */}
+            <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-topuria-red via-topuria-black to-topuria-red text-topuria-white font-black text-2xl px-6 py-2 z-10">
+              <div className="flex items-center gap-3">
+                <span>17</span>
+                <span>-</span>
+                <span>0</span>
+                <span>-</span>
+                <span>0</span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Mobile Mini Cards */}
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            {leftMiniCards.map((card, index) => (
+              <MiniCardComponent key={index} card={card} delay={0} />
+            ))}
+            {rightMiniCards.map((card, index) => (
+              <MiniCardComponent key={index} card={card} delay={0.2} />
+            ))}
+          </div>
+
+          {/* Mobile Stats - Combined */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="space-y-6"
+          >
+            {/* Circular Stats */}
+            <div>
+              <h3 className="text-lg font-bold text-topuria-black mb-4 text-center">
+                Efectividad de Combate
+              </h3>
+              <div className="grid grid-cols-3 gap-4">
+                {circularStats.map((stat, index) => (
+                  <CircularProgress 
+                    key={stat.id} 
+                    stat={stat} 
+                    delay={index * 100}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Simple Stats */}
+            <div>
+              <h3 className="text-lg font-bold text-topuria-black mb-4 text-center">
+                Estadísticas Técnicas
+              </h3>
+              <div className="grid grid-cols-2 gap-2">
+                {rightStats.map((stat, index) => (
+                  <StatCard key={stat.label} stat={stat} index={index} />
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* DESKTOP LAYOUT - Original grid */}
+        <div className="hidden lg:grid lg:grid-cols-3 gap-6 items-center h-full">
           
           {/* Left Panel */}
           <motion.div 
@@ -347,7 +449,7 @@ export default function StatsSection() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="space-y-4"
           >
-            {/* Mini card arriba - más visible */}
+            {/* Mini card arriba */}
             <div className="mb-6">
               {leftMiniCards.map((card, index) => (
                 <MiniCardComponent key={index} card={card} delay={0} />
@@ -381,7 +483,7 @@ export default function StatsSection() {
             transition={{ duration: 1, delay: 0.3 }}
             className="relative flex flex-col items-center justify-center h-full"
           >
-            {/* Champion Badge - DETRÁS de la imagen */}
+            {/* Champion Badge */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
@@ -391,7 +493,7 @@ export default function StatsSection() {
               Campeón Activo
             </motion.div>
 
-            {/* ILIA arriba en negro - MÁS GRANDE con spacing y CENTRADO */}
+            {/* ILIA arriba */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
@@ -403,7 +505,7 @@ export default function StatsSection() {
               </h2>
             </motion.div>
 
-            {/* TOPURIA debajo en rojo */}
+            {/* TOPURIA debajo */}
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
@@ -438,7 +540,7 @@ export default function StatsSection() {
               />
             </motion.div>
 
-            {/* Record at bottom - SOBRE la imagen */}
+            {/* Record at bottom */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -462,7 +564,7 @@ export default function StatsSection() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="space-y-4"
           >
-            {/* Mini card arriba - más visible */}
+            {/* Mini card arriba */}
             <div className="mb-6">
               {rightMiniCards.map((card, index) => (
                 <MiniCardComponent key={index} card={card} delay={0.2} />

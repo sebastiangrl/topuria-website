@@ -209,7 +209,7 @@ export default function HeroSection() {
               className="text-center"
             >
               <button
-                onClick={() => scrollToSection('about')}
+                onClick={() => scrollToSection('stats')}
                 className="bg-transparent border-2 border-topuria-gold/60 text-topuria-white/90 px-8 py-4 rounded-full font-bold uppercase tracking-widest text-sm hover:bg-topuria-gold/10 hover:border-topuria-gold transition-all duration-500 hover:scale-105"
               >
                 Conoce al Bicampeón
@@ -231,7 +231,7 @@ export default function HeroSection() {
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           className="flex flex-col items-center space-y-2 text-topuria-white/40 cursor-pointer hover:text-topuria-white/60 transition-colors"
-          onClick={() => scrollToSection('about')}
+          onClick={() => scrollToSection('stats')}
         >
           <span className="text-xs uppercase tracking-widest mb-2">Scroll</span>
           <ArrowDown className="w-4 h-4" />
