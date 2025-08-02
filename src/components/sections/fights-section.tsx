@@ -1,7 +1,7 @@
 // src/components/sections/fights-section.tsx
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { Calendar, MapPin } from 'lucide-react'
 import type { Variants } from 'framer-motion'
@@ -12,6 +12,7 @@ import { peleasProfesionales, topuriaData } from '@/data/fights-data'
 import type { Pelea } from '@/data/fights-data'
 
 export default function FightsSection() {
+  // Inicialización directa y simple
   const [peleaSeleccionada, setPeleaSeleccionada] = useState<Pelea>(peleasProfesionales[0])
   const [modalAbierto, setModalAbierto] = useState(false)
   const [modalOponente, setModalOponente] = useState(false)
@@ -64,6 +65,7 @@ export default function FightsSection() {
       </div>
 
       <motion.div
+        key={`fight-section-${peleaSeleccionada.id}`}
         variants={containerVariants}
         initial="hidden"
         animate={isInView ? "visible" : "hidden"}
@@ -75,14 +77,14 @@ export default function FightsSection() {
         </motion.div>
 
         {/* Main Content */}
-        <div className="space-y-8 lg:space-y-16">
+        <div className="space-y-6 lg:space-y-16">
           
           {/* Título */}
           <motion.div variants={itemVariants} className="text-center">
-            <h2 className="text-3xl md:text-4xl lg:text-7xl font-black text-topuria-red leading-tight">
+            <h2 className="text-2xl md:text-4xl lg:text-7xl font-black text-topuria-red leading-tight">
               HISTORIAL DE COMBATES
             </h2>
-            <div className="w-20 lg:w-32 h-1 bg-topuria-red mx-auto mt-4 lg:mt-6"></div>
+            <div className="w-16 lg:w-32 h-1 bg-topuria-red mx-auto mt-3 lg:mt-6"></div>
           </motion.div>
 
           {/* Fight Selection Slider */}
@@ -101,85 +103,93 @@ export default function FightsSection() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
-              className="space-y-8"
+              className="space-y-6"
             >
-              {/* Event Info */}
-              <div className="text-center space-y-4">
-                <div className="bg-topuria-red text-topuria-white px-4 py-2 font-bold text-sm uppercase tracking-wide inline-block">
+              {/* Event Info - Más compacto */}
+              <div className="text-center space-y-3">
+                <div className="bg-topuria-red text-topuria-white px-3 py-1.5 font-bold text-xs uppercase tracking-wide inline-block">
                   {peleaSeleccionada.evento}
                 </div>
                 
-                <div className="space-y-2 text-topuria-white text-sm">
-                  <div className="flex items-center justify-center gap-2">
-                    <Calendar className="w-4 h-4" />
+                <div className="space-y-1 text-topuria-white text-xs">
+                  <div className="flex items-center justify-center gap-1">
+                    <Calendar className="w-3 h-3" />
                     <span>{formatearFecha(peleaSeleccionada.fecha)}</span>
                   </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <MapPin className="w-4 h-4" />
+                  <div className="flex items-center justify-center gap-1">
+                    <MapPin className="w-3 h-3" />
                     <span className="text-center">{peleaSeleccionada.ubicacion}</span>
                   </div>
                 </div>
               </div>
 
-              {/* VS Section */}
-              <div className="text-center">
-                <div className="text-5xl md:text-6xl font-black text-topuria-red mb-4">
-                  VS
-                </div>
+              {/* Layout tipo Desktop - Fighters lado a lado con VS en el centro */}
+              <div className="grid grid-cols-3 gap-2 items-center">
                 
-                <div className="grid grid-cols-3 gap-1 text-xs max-w-xs mx-auto">
-                  <div className="bg-gray-800 p-2 text-topuria-white">
-                    <div className="font-bold text-xs">{peleaSeleccionada.metodo}</div>
-                    <div className="text-xs text-gray-400">MÉTODO</div>
+                {/* Topuria - Izquierda */}
+                <div className="flex flex-col items-center">
+                  <FighterCard
+                    nombre="Ilia Topuria"
+                    imagen="/images/combates/topuria-fight.png"
+                    resultado={peleaSeleccionada.resultado === 'Victoria' ? 'GANADOR' : 'PERDEDOR'}
+                    isWinner={peleaSeleccionada.resultado === 'Victoria'}
+                    onClick={() => setModalAbierto(true)}
+                    stats={peleaSeleccionada.stats}
+                    fighterData={{
+                      record: topuriaData.record,
+                      altura: topuriaData.altura,
+                      alcance: topuriaData.alcance,
+                      edad: topuriaData.edad,
+                      nacionalidad: topuriaData.nacionalidad
+                    }}
+                    isMobile={true}
+                    isCompact={true}
+                  />
+                </div>
+
+                {/* VS Centro - Más compacto */}
+                <div className="text-center space-y-2">
+                  <div className="text-2xl sm:text-3xl font-black text-topuria-red">
+                    VS
                   </div>
-                  <div className="bg-gray-800 p-2 text-topuria-white">
-                    <div className="font-bold text-xs">R{peleaSeleccionada.asalto}</div>
-                    <div className="text-xs text-gray-400">ASALTO</div>
-                  </div>
-                  <div className="bg-gray-800 p-2 text-topuria-white">
-                    <div className="font-bold text-xs">{peleaSeleccionada.tiempo}</div>
-                    <div className="text-xs text-gray-400">TIEMPO</div>
+                  
+                  {/* Stats compactos */}
+                  <div className="grid grid-cols-1 gap-1 text-xs">
+                    <div className="bg-gray-800 p-1 text-topuria-white">
+                      <div className="font-bold text-xs">{peleaSeleccionada.metodo}</div>
+                      <div className="text-xs text-gray-400">MÉTODO</div>
+                    </div>
+                    <div className="bg-gray-800 p-1 text-topuria-white">
+                      <div className="font-bold text-xs">R{peleaSeleccionada.asalto}</div>
+                      <div className="text-xs text-gray-400">ASALTO</div>
+                    </div>
+                    <div className="bg-gray-800 p-1 text-topuria-white">
+                      <div className="font-bold text-xs">{peleaSeleccionada.tiempo}</div>
+                      <div className="text-xs text-gray-400">TIEMPO</div>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Fighters */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Topuria */}
-                <FighterCard
-                  nombre="Ilia Topuria"
-                  imagen="/images/combates/topuria-fight.png"
-                  resultado={peleaSeleccionada.resultado === 'Victoria' ? 'GANADOR' : 'PERDEDOR'}
-                  isWinner={peleaSeleccionada.resultado === 'Victoria'}
-                  onClick={() => setModalAbierto(true)}
-                  stats={peleaSeleccionada.stats}
-                  fighterData={{
-                    record: topuriaData.record,
-                    altura: topuriaData.altura,
-                    alcance: topuriaData.alcance,
-                    edad: topuriaData.edad,
-                    nacionalidad: topuriaData.nacionalidad
-                  }}
-                  isMobile={true}
-                />
-
-                {/* Oponente */}
-                <FighterCard
-                  nombre={peleaSeleccionada.oponente}
-                  imagen={peleaSeleccionada.imagenOponente}
-                  resultado={peleaSeleccionada.resultado === 'Victoria' ? 'PERDEDOR' : 'GANADOR'}
-                  isWinner={peleaSeleccionada.resultado !== 'Victoria'}
-                  onClick={() => setModalOponente(true)}
-                  stats={peleaSeleccionada.oponenteStats}
-                  fighterData={{
-                    record: peleaSeleccionada.oponenteStats.record,
-                    altura: peleaSeleccionada.oponenteStats.altura,
-                    alcance: peleaSeleccionada.oponenteStats.alcance,
-                    edad: peleaSeleccionada.oponenteStats.edad,
-                    nacionalidad: peleaSeleccionada.oponenteStats.nacionalidad
-                  }}
-                  isMobile={true}
-                />
+                {/* Oponente - Derecha */}
+                <div className="flex flex-col items-center">
+                  <FighterCard
+                    nombre={peleaSeleccionada.oponente}
+                    imagen={peleaSeleccionada.imagenOponente}
+                    resultado={peleaSeleccionada.resultado === 'Victoria' ? 'PERDEDOR' : 'GANADOR'}
+                    isWinner={peleaSeleccionada.resultado !== 'Victoria'}
+                    onClick={() => setModalOponente(true)}
+                    stats={peleaSeleccionada.oponenteStats}
+                    fighterData={{
+                      record: peleaSeleccionada.oponenteStats.record,
+                      altura: peleaSeleccionada.oponenteStats.altura,
+                      alcance: peleaSeleccionada.oponenteStats.alcance,
+                      edad: peleaSeleccionada.oponenteStats.edad,
+                      nacionalidad: peleaSeleccionada.oponenteStats.nacionalidad
+                    }}
+                    isMobile={true}
+                    isCompact={true}
+                  />
+                </div>
               </div>
             </motion.div>
           </div>
