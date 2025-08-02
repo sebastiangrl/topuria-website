@@ -1,7 +1,7 @@
 // src/components/sections/fights-section.tsx
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import { Calendar, MapPin } from 'lucide-react'
 import type { Variants } from 'framer-motion'
